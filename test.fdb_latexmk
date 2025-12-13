@@ -1,0 +1,26 @@
+# Fdb version 4
+["dvipdf"] 0 "test.dvi" "test.pdf" "test" 0 -1
+  "test.dvi" 0 -1 0 "latex"
+  (generated)
+  "test.pdf"
+  (rewritten before read)
+["latex"] 1763637678.29352 "test.tex" "test.dvi" "test" 1763637682.37369 2
+  "/usr/local/texlive/2025/texmf-dist/tex/latex/graphics-cfg/graphics.cfg" 1465944070 1224 978390e9c2234eab29404bc21b268d1e ""
+  "/usr/local/texlive/2025/texmf-dist/tex/latex/graphics-def/dvipdfmx.def" 1663965824 12296 04d6453afafd99986deba3629756d9ec ""
+  "/usr/local/texlive/2025/texmf-dist/tex/latex/graphics/graphics.sty" 1730496337 18363 dee506cb8d56825d8a4d020f5d5f8704 ""
+  "/usr/local/texlive/2025/texmf-dist/tex/latex/graphics/graphicx.sty" 1717359999 8010 6f2ad8c2b2ffbd607af6475441c7b5e4 ""
+  "/usr/local/texlive/2025/texmf-dist/tex/latex/graphics/keyval.sty" 1717359999 2671 70891d50dac933918b827d326687c6e8 ""
+  "/usr/local/texlive/2025/texmf-dist/tex/latex/graphics/trig.sty" 1717359999 4023 2c9f39712cf7b43d3eb93a8bbd5c8f67 ""
+  "/usr/local/texlive/2025/texmf-dist/tex/latex/l3backend/l3backend-dvipdfmx.def" 1716410060 29748 8e95a4c177d0fd42b8beea2dd6186aa4 ""
+  "/usr/local/texlive/2025/texmf-dist/tex/latex/tools/bm.sty" 1717359999 13236 1aba485b47e3c79a47dc0906cc971820 ""
+  "/usr/local/texlive/2025/texmf-dist/tex/platex/jsclasses/jsarticle.cls" 1677186565 61387 1c16fa09f9aa344f6b7ed4a7e2c399b2 ""
+  "/usr/local/texlive/2025/texmf-dist/web2c/texmf.cnf" 1739380943 42148 61becc7c670cd061bb319c643c27fdd4 ""
+  "/usr/local/texlive/2025/texmf-var/web2c/pdftex/latex.fmt" 1763637334 3345657 397086d1fac3ef71da37ef67f4115c26 ""
+  "/usr/local/texlive/2025/texmf.cnf" 1741450484 577 418a7058ec8e006d8704f60ecd22c938 ""
+  "test.aux" 1763637682.33785 8 a94a2480d3289e625eea47cd1b285758 "latex"
+  "test.tex" 1763637637.39827 303 82a88437b2304fdfa63273fd0c4ba4cb ""
+  (generated)
+  "test.aux"
+  "test.dvi"
+  "test.log"
+  (rewritten before read)
