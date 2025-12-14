@@ -8,24 +8,40 @@
         "-interaction=nonstopmode",
         "-file-line-error",
         "%DOC%"
-      ]
+      ],
+      "cwd": "%DIR%"
     },
     {
       "name": "dvipdfmx",
       "command": "dvipdfmx",
       "args": [
+        "-o",
+        "%DOCFILE%.pdf",
         "%DOCFILE%.dvi"
-      ]
+      ],
+      "cwd": "%DIR%"
     }
   ],
   "latex-workshop.latex.recipes": [
     {
-      "name": "platex -> dvipdfmx",
+      "name": "platex -> dvipdfmx (in file dir)",
       "tools": [
         "platex",
         "dvipdfmx"
       ]
     }
+  ],
+  "latex-workshop.latex.recipe.default": "platex -> dvipdfmx (in file dir)",
+  "latex-workshop.latex.outDir": ".",
+  "latex-workshop.latex.autoBuild.run": "onSave",
+  "latex-workshop.latex.build.forceRecipeUsage": true,
+  "latex-workshop.latex.build.onSave.enabled": true,
+  "latex-workshop.latex.search.rootFiles": [
+    "essay/essay.tex"
+  ],
+  "latex-workshop.latex.search.exclude": [
+    "**/template/**",
+    "**/docs/**"
   ],
   "latex-workshop.view.pdf.viewer": "tab"
 }

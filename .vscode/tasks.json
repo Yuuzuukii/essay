@@ -1,0 +1,19 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build essay (platex -> dvipdfmx)",
+      "type": "shell",
+      "command": "platex -interaction=nonstopmode -file-line-error essay.tex && dvipdfmx essay.dvi",
+      "options": {
+        "cwd": "${workspaceFolder}/essay"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    }
+  ]
+}
+
