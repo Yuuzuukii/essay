@@ -4,15 +4,17 @@
 
 \usepackage[dvipdfmx]{graphicx}
 \usepackage{float}
+\usepackage{amsmath}
 
 % Editor-friendly section delimiters (do not affect output)
 \newenvironment{introduction}{\par\ignorespaces}{\par\ignorespacesafterend}
 \newenvironment{relatedwork}{\par\ignorespaces}{\par\ignorespacesafterend}
 \newenvironment{system}{\par\ignorespaces}{\par\ignorespacesafterend}
 \newenvironment{method}{\par\ignorespaces}{\par\ignorespacesafterend}
+\newenvironment{experiment}{\par\ignorespaces}{\par\ignorespacesafterend}
 \newenvironment{evaluation}{\par\ignorespaces}{\par\ignorespacesafterend}
-\newenvironment{result}{\par\ignorespaces}{\par\ignorespacesafterend}
 \newenvironment{consideration}{\par\ignorespaces}{\par\ignorespacesafterend}
+\newenvironment{outlook}{\par\ignorespaces}{\par\ignorespacesafterend}
 \newenvironment{discussion}{\par\ignorespaces}{\par\ignorespacesafterend}
 \newenvironment{conclusion}{\par\ignorespaces}{\par\ignorespacesafterend}
 
@@ -40,7 +42,7 @@
 \maketitle					% 「とびら」の出力
 
 \begin{jabstract}				% 和文梗概
-大規模言語モデル（LLM）を用いた質問応答システムは，さまざまなアプリケーション，システムで実用化が進んでいる.
+大規模言語モデル（LLM）を用いた質問応答システムは，さまざまなアプリケーション，システムで実用化が進んでいる．
 そして近年では，LLMに複数の価値観や立場を付与したマルチエージェント対話が提案され，模擬的な議論や意思決定を生成する技術が登場している．
 多文化共生社会においては,質問応答は単なる情報検索にとどまらず,異なる文化的・宗教的・倫理的背景をもつ人々の相互理解を促進する役割が求められている．
 しかしながら，既存のLLMベースのマルチエージェント対話は，対立する立場をもとに勝敗を決めるディベート的議論が多く，最終的な結論も表層的な折衷案の提示に留まる．
@@ -49,14 +51,14 @@
 具体的には，kido，kurihara[1]らの記号論理に基づく既存の弁証法議論，および統合のアルゴリズムの手続きを参照し，その形式的プロセスをLLMマルチエージェントが自然言語で模倣できるように再構成した段階的対話モデルを設計する．
 本手法の実現にあたり，取り組むべき課題は以下の2点である．
 
-\noindent\textbf{議論の収束}
+\noindent 議論の収束
 
 質問応答のシステムに適用される推論のプロトコルは，その推論過程の終了を保証できなければならない．
 こと弁証法的対話プロトコルにおいては，エージェント同士の議論を収束させることで，推論過程の終了を保証する．
 記号論理を用いて表現されたエージェントの知識ベースや，それらを用いた論理は手動で定義されるため，有限であり，同じ論理の再使用を許可しない限り，それらを用いて行う議論は必ず収束する．
 しかし，自然言語を用いて議論を行うLLMのエージェント同士の議論では，意味的に同義である論理の再使用を制限する必要があり，その制御はプロンプトによる指示だけではそれを保証できない．
 
-\noindent\textbf{高次な止揚論証の生成}
+\noindent 高次な止揚論証の生成
 
 統合（止揚）は折衷ではなく価値の再構成による高次な概念の創出を意味するが，その成立条件及び構築アルゴリズムは自然言語では明確化されておらず，形式的定義だけでは意味的統合として妥当かを判断できない.
 また，kido，kurihara[1]の統合アルゴリズムでは，入力としてお互いにdefeatedされた論証のみを入力としていたが，LLMでは議論の収束が難しく，議論に決着をつけることがほとんどできないため，統合アルゴリズムをそのまま適用することは実用的に困難である．
@@ -70,17 +72,56 @@
 
 本研究の貢献は以下の通りである．
 
-\noindent\textbf{議論の収束} 
+\noindent 議論の収束 
 
 実装したシステムを用いて10個のトピックについて議論を行わせ，対話プロトコルは必ず収束することを確認した.
 
-\noindent\textbf{高次な止揚論証の生成} 
+\noindent 高次な止揚論証の生成 
 
 実装した質問応答システムを用いてkido, kurihara[1]らの対話例を実際に行い，最終的な止揚論証が意味的に一致することを確認した．
 
 \end{jabstract}
 
 \begin{eabstract}				% 英文梗概
+Question answering systems using large language models (LLMs) are being increasingly deployed across various applications and systems.
+In recent years, multi-agent dialogue approaches that assign multiple values and perspectives to LLMs have been proposed, enabling the generation of simulated debates and decision-making processes.
+In multicultural societies, question answering is expected not only to serve as information retrieval but also to facilitate mutual understanding among people with diverse cultural, religious, and ethical backgrounds by generating consensus-based responses.
+
+However, existing LLM-based multi-agent dialogues often rely on debate-style arguments that determine winners and losers based on opposing positions, with final conclusions limited to superficial compromises.
+For instance, when addressing topics such as "Should students or staff be responsible for school cleaning?", current LLMs tend to return compromise solutions like "students for daily cleaning, staff for specialized cleaning."
+Such responses fail to achieve dialectical synthesis that, by addressing the fundamental conflict of values, redefines cleaning as an educational activity and proposes collaborative cleaning by both students and staff.
+
+Therefore, this study proposes a dialectical dialogue protocol that enables LLM-based multi-agent dialogue to guide the reconstruction (synthesis) of new values, systems, and concepts on topics involving diverse value conflicts.
+Specifically, we refer to the existing dialectical argumentation and integration algorithms based on symbolic logic by Kido and Kurihara [1], and redesign the formal process into a stepwise dialogue model that LLM multi-agents can replicate using natural language.
+
+To realize this approach, two key challenges must be addressed:
+
+\textbf{Convergence of Argumentation:}
+The reasoning protocol applied to question answering systems must guarantee the termination of the reasoning process.
+In dialectical dialogue protocols, this is ensured by converging the arguments between agents.
+When using symbolic logic, knowledge bases and logical rules are manually defined and thus finite; as long as reuse of the same logic is not permitted, arguments using them will necessarily converge.
+However, in LLM-based agent dialogues using natural language, it is necessary to restrict the reuse of semantically equivalent logic, and this control cannot be guaranteed by prompt instructions alone.
+
+\textbf{Generation of Higher-Order Synthetic Arguments:}
+Synthesis (Aufhebung) refers not to compromise but to the creation of higher-order concepts through value reconstruction. However, the conditions for its establishment and construction algorithms are not clearly defined in natural language, and formal definitions alone cannot determine semantic validity as integration.
+Furthermore, Kido and Kurihara's [1] integration algorithm accepts only mutually defeated arguments as input. Since LLMs struggle to achieve argumentative convergence and rarely reach definitive conclusions, directly applying the integration algorithm is practically difficult.
+
+To address these challenges, this study explicitly restricts the regeneration of identical claims and rebuttals via prompts in the "rebuttal" phase, where agents engage in iterative argumentation within the protocol, and imposes an upper limit on the number of rebuttals.
+When this limit is reached, the dialogue terminates, and agents are prompted to extract the conflicting evaluation axes from the generated argument set.
+This enables transition to integration processing even when the arguments have not reached definitive conclusions, by explicitly articulating the conflict structure.
+
+For constructing synthetic arguments, we refer to the formal procedures of Kido and Kurihara's [1] integration algorithm and reformulate them as natural language prompts.
+Specifically, we confirmed that synthetic arguments reconstructing the premises of values themselves, rather than mere compromises, can be generated by sequentially executing processes such as expanding the premises (support) of conflicting claims based on background knowledge, specializing arguments based on integrable evaluation axes (Specialization), and deriving superordinate concepts that subsume both (Generalization).
+
+Additionally, we implemented a question answering system incorporating the proposed protocol and compared the results with the synthetic argument examples by Kido and Kurihara [1].
+
+The contributions of this study are as follows:
+
+\textbf{Convergence of Argumentation:}
+Using the implemented system, we conducted dialogues on 10 topics and confirmed that the dialogue protocol always converges.
+
+\textbf{Generation of Higher-Order Synthetic Arguments:}
+Using the implemented question answering system, we reproduced the dialogue examples by Kido and Kurihara [1] and confirmed that the final synthetic arguments are semantically consistent.
 
 \end{eabstract}
 
@@ -96,44 +137,27 @@
 しかし既存手法の多くは，対立する立場をもとに勝敗を決めるディベート的議論，あるいは双方の主張を並列した表層的な折衷案に収束しやすい．
 その結果，対立を保持したまま共通項を抽出し，新たな価値・制度・概念の再構成として解決を導く止揚的な回答生成には至りにくいという課題がある．
 
-そこで本研究では，記号論理で形式化された弁証法的推論の枠組みに基づき，複数のLLMエージェントが論証構築・相互反論・統合を段階的に実行する対話プロトコルを提案する．
-具体的には，Kido, Kurihara らの弁証法議論形式[1]を参照し，記号論理で示された対話プロトコルと統合の手法を，2体のLLMエージェントを用いた弁証法的推論による質問応答システムに適用するために拡張する．
-プロトコルはフェーズは論証構築フェーズ，反論フェーズ，統合フェーズから構成され，論証構築とそれに対する反論は，2体の対話エージェントによって相互に行われる．
-エージェントの議論は，結論とその前提を論理的に1文で表現する argument と，前提部分のみで構成される support を組み合わせた Argument スキーマを通じて行われる．
-これにより，各フェーズでの発話は，単なる自然言語の主張ではなく，「どの結論が，どの前提に基づいて導かれているのか」が明示された構造化表現として扱われる．その結果，反論フェーズにおいては，相手の結論そのものを否定するのか（rebut），あるいは前提や推論規則を攻撃するのか（undercut）といった攻撃の型を厳密に区別することが可能となる．
-さらに，本スキーマに基づく表現は，後段の統合フェーズにおいて，対立する論証の前提構造を抽象化・再構成するための入力としても利用される．すなわち，議論フェーズで得られた Argument 群を，結論と根拠の対応関係を保持したまま整理することで，specialization や generalization による止揚論証（synthesis）の構築を，一貫した形式のもとで実行できる．
-そしてこのプロトコルを適用したシステムは，エージェントの論証の状態や，プロトコルの制御を行う．
-具体的に次のようにプロトコルは遷移する．
+そこで本研究では，記号論理で形式化された弁証法的推論の枠組みに基づき，複数のLLMエージェントが論証構築・相互反論・統合を段階的に行う対話プロトコルを提案する．
+具体的には，Kido, Kurihara らの弁証法議論形式[1]を参照し，記号論理で示された対話プロトコルと統合の手法を，2体のLLMエージェントを用いた弁証法的推論による質問応答システムに適用する．
+プロトコルは論証構築フェーズ，反論フェーズ，統合フェーズから構成され，論証構築とそれに対する反論は，2体の対話エージェントによって相互に行われる．
 
-論証構築フェーズでは，まず一方のエージェント（AG1）が自身の立場に基づく主張を構築する．
-続く反論フェーズでは，相手のエージェント（AG2）がその主張に対して反論可能かを判断し，可能であれば反論を生成する．
-AG2が反論できない場合，AG1の主張は支持されたものとして議論を終了する．
+本提案手法を実現するにあたり，取り組むべき課題は以下の2点である．
 
-一方，AG2が反論を行った場合，AG1はその反論に対して再度反論可能かを判断し，可能であれば再反論を行う．
-AG1が再反論できない場合，AG1の主張は退けられたものとみなされる．
-このような反論と再反論のやり取りを1回の議論単位とし，システムであらかじめ設定した最大反論回数に達するまで繰り返す．
-最大回数に達しても，いずれの主張にも決着がつかない場合，その議論は「未決着」の状態として扱う．
+\noindent\textbf{議論の収束}
 
-AG1の主張が退けられた場合，あるいは議論が未決着のまま終了した場合には，次にAG2が自身の立場から新たな主張を構築し，同様の手続きを行う．
-このようにして，両エージェントの主張に関する議論を一通り行った後，統合フェーズへと移行する．
+LLMの自由発話による議論は，発話の役割や論点が明示的に制約されないため，話題の逸脱や同一主張の反復が生じやすく，対立が解消されないまま議論が循環するという問題がある．また，どの主張がどの前提に基づき，どの反論によって否定されたのかが不透明となり，収束の判定が困難である．
+本研究ではこの問題に対し，発話の役割を明示した構造化メッセージスキーマを導入し，各ターンを結論と最小限の前提からなる論証として表現する．さらに，反論が生成不可能となった時点を終了条件として定義することで，議論の進行を形式的に管理し，無限ループを抑制する．これにより，議論の可視性を保ちながら収束性を担保する．
 
-本来，Kido・Kuriharaの統合アルゴリズムは，双方の主張がいずれも反論によって退けられた場合に適用される．
-しかし本研究では，議論に決着がつかず未決着のまま終了した場合にも，統合処理を行うように拡張した．
+\noindent\textbf{高次な止揚論証の生成}
 
-その理由は二つある．
-第一に，LLMエージェントによる自然言語の議論では，意味的に近い主張が繰り返されやすく，形式的な意味での決着がつかないまま議論が継続してしまう場合が多いからである．
-第二に，実社会の議論においても，必ずしも一方が完全に論破されるとは限らず，むしろ対立点を整理した上で新たな解決策を見出すことこそが，弁証法的推論の本質であると考えられるためである．
+Kido, Kuriharaによって提案された統合のアルゴリズム（Reasoning Method）は，記号論理に対する操作は可能であるものの，自然言語に対する操作は不可能であり，これをそのまま用いて止揚論証を構築することは困難である．
+本研究では，統合のための論証スキーマも提案した上で，Reasoning Methodを意味的に解釈し，指示プロンプトに反映することで，LLM上で特化（specialization）および一般化（generalization）の操作を擬似的に実装する．
+これにより，対立する論証の前提構造を再編成し，単なる折衷ではなく，上位概念に基づく高次な止揚論証の生成を可能とする．
+また，Kido, Kuriharaが実際に行っていた対話例を本提案システム上でも実行し，同様の止揚論証が得られることを確認した．
 
-統合フェーズでは，これまでの議論をもとに，AG1が双方の主張の対立点を整理し，統合アルゴリズムに適した形へと再構成する．
-この再構成は，Kido・KuriharaにおけるSpecializationに対応し，両者の立場から受け入れ可能な条件を抽出・明示した形の主張を生成する操作である．
-続くGeneralizationでは，再構成された二つの主張を入力として，それらが同時に成立しうる制度的枠組みや社会的背景といった上位概念を導出する．
-
-これらの処理により，本手法は，各エージェントが議論を通じて相手の価値観を理解した上で，単なる折衷ではなく，両者の前提を再構成する高次の解決策（止揚論証）を生成することを可能にする．
-
-本研究の実装上の課題は，（1）議論の収束と，（2）高次な止揚論証の生成である．
-課題（1）に対しては，反論フェーズにおいて反論の最大回数を設定することによって、議論の収束を保証した．
-課題（2）に対しては，kido, kuriaraら[1]のSpecialization，Generalizationをプロンプトに落とし込むことで，記号論理で定義された既存手法と同様の止揚論証を生成できることを確認した．
-以降では，関連研究と課題設定を整理した上で，システムのアーキテクチャと提案プロトコルの詳細設計を述べ，評価と考察を通じて有効性と限界を明らかにし，最後に結論と今後の課題をまとめる．
+以下，本論文では2章において関連研究を示した上で本研究の位置付けを行い，3章では実際に提案するシステム，プロトコルについて詳細に説明する．
+続いて4章では評価として，Kido, Kuriharaらの対話例を実際に行わせ，5章でそれらを評価した．
+最後に，6章で評価結果から考えられる考察と，本研究の将来的な展望を述べる．
 
 \end{introduction}
 
@@ -144,34 +168,31 @@ AG1の主張が退けられた場合，あるいは議論が未決着のまま�
 \subsection{記号論理に基づく弁証法的議論とその限界}\label{subsec-dialectics}
 対立する主張を形式的に扱う枠組みとして，弁証法議論に関する研究が行われてきた．
 
-Sawamura，Umedaら[2][3]は，Prakken, Sartorら[4]の拡張論理プログラミングに基づき，弁証法議論の枠組み（Computational Dialectics） を提案している．
-この枠組みでは論証の構築と，相手の論証に対する攻撃（rebut, undercut）を段階的に行い，複数のエージェントが対話を通じて弁証法的に統合を行う議論フレームワークを形式定義している．
-ただしSawamura，Umedaらは文献の中で，具体的な止揚論証の導出方法は神託（a sort of oracle）であると述べており、形式定義される止揚論証の意味的な実態や，それらの構築方法は未実装であった．
+Sawamura，Umedaら[2][3]は，Prakken, Sartorら[4]の拡張論理プログラミングに基づき，弁証法議論の枠組み（Computational Dialectics）を提案している．
+この枠組みでは，論証の構築と，相手の論証に対する攻撃（rebut, undercut）を段階的に行い，複数のエージェントが対話を通じて弁証法的に統合を行う議論フレームワークを形式定義している．
+ただし，Sawamura，Umedaらは文献の中で，具体的な止揚論証の導出方法は神託（a sort of oracle）であると述べており，形式定義される止揚論証の意味的実体や，その構築方法は未実装であった．
 
-kido, kuriharaら[1]は，これらの課題に対して，形式定義された止揚論証をSpecializationおよびGeneralizationによって構築する手法を提案した．
-これにより，対話を通じて，双方の立場を包含する統合を行うための形式的操作が明確化された．
-一方で，これらの手法は記号論理による知識表現を前提としており，統合可能な概念や評価軸は，あらかじめ定義された述語や規則の範囲に強く制約される．
-その結果，現実の社会的・倫理的議論に見られるような，文脈依存的で曖昧な価値観や，新たな概念の創発を伴う高次の止揚を十分に扱うことは困難である．
-さらに，形式的に導出された止揚論証が，実際にどのような意味的解釈を持ち，どのような制度や価値の再構成を示すのかは，論理式そのものからは直接的に読み取ることができず，依然として課題として残されている．
+これに対して，Kido, Kuriharaら[1]は，SpecializationおよびGeneralizationによって，形式定義された止揚論証を構築する手法を提案した．
+この手法により，対話を通じて双方の立場を包含する統合を行うための形式的操作が明確化された．
 
-加えて，これらの記号論理で表現される議論のフレームワークでは，議論に用いられる事実や規則，およびそれらの組合せがあらかじめ明示的に定義された知識ベースに強く依存する．
-そのため，扱える概念や評価軸は限定的であり，現実の社会的・倫理的問題に見られるような，曖昧で文脈依存的な価値観や，新たな観点の創発を柔軟に取り込むことが難しい．
-また，統合（止揚）においても，論理式として記述可能な範囲での形式的な一般化にとどまり，意味的に妥当な再解釈や，高次の概念形成を伴う統合を十分に表現できないという課題がある．
+一方で，これらの手法はいずれも記号論理による知識表現を前提としており，議論に用いられる事実や規則，およびそれらの組合せは，あらかじめ定義された知識ベースに強く依存する．
+そのため，統合可能な概念や評価軸は限定的であり，現実の社会的・倫理的議論に見られるような，文脈に強く依存し，必ずしも明確に定義できない価値観や，議論の過程で新たな視点や概念が創発されるような高次の止揚を，十分に扱うことが難しい．
+また，形式的に導出された止揚論証が，どのような意味的解釈を持ち，どのような制度や価値の再構成を示すのかは，論理式そのものからは直接的に読み取ることができず，依然として課題として残されている．
 
 \subsection{大規模言語モデルによる弁証法的議論とその限界}\label{subsec-toc}
 そこで近年では，大規模言語モデル（LLM）を複数のエージェントに分担させ，異なる視点から推論を進めるマルチエージェント対話が注目されている．
 
-Anghelら[5]は，複数のLLMを用いて弁証法的推論を模倣する枠組みを提案し，(1) 主張（thesis）の生成，(2) 反論（antithesis）の生成，(3) 統合（synthesis）の生成という三段階の推論フローを設計している．同手法では，主張生成エージェントと反論生成エージェントを分離し，さらに生成された推論過程や最終的な統合結果に対して，別の評価エージェントがルーブリックに基づく評価を行う点に特徴がある．
+Anghelら[5]は，複数のLLMを用いて弁証法的推論を模倣する枠組みを提案し，(1) 主張（thesis）の生成，(2) 反論（antithesis）の生成，(3) 統合（synthesis）の生成という三段階の推論フローを設計している．
+同手法では，主張，反論，そして統合を行うエージェントを別々に定義し，自由発話によってそれら構築する．
+さらに生成された推論過程や最終的な統合結果に対して，別の評価エージェントがルーブリックに基づく評価を行う点に特徴がある．
 
-一方で，このようなLLMを用いた弁証法的推論では，対立する立場を明確に定義すること自体が容易ではないという課題がある．例えば，賛否を問う形式のトピックにおいても，立場の違いが価値の否定としてではなく，責任の範囲や強度の差として解釈される場合が多く，明確な対立軸を構成しにくい．その結果，立場間の関係は「賛成か反対か」という二値的な整理に還元されやすく，弁証法的議論として重要な，互いに排他的な主張同士の衝突を前提とした対話を十分に構成できない場合がある．
+一方で，エージェントは発話を一度だけしか行わず，議論によってエージェント同士のスタンスや価値観の理解などを促進させることはしていない．
+これは，形式定義された弁証法議論には則っておらず，あくまで擬似的に弁証法的推論を行ったに過ぎない．
+また，このシステムを多ターンに展開するとしても，自由発話によって構築された論証では，各発話の役割や攻撃関係，および前提の継承関係が構造的に管理されないため，論点の逸脱や同一主張の反復が生じやすく，議論の深化や収束が保証されない．
+その結果，対立の整理は行われても，前提の再編成や新たな概念形成を伴う止揚には至らず，表層的な対立調整にとどまる可能性が高い
 
-また，反論生成の過程においても，反対の結論を導くための前提が列挙される一方で，それらが主張側のどの前提を否定しているのかが明示されないことが多い．このような場合，反論は独立した懸念の提示にとどまり，前提間の衝突関係や攻撃対象が不明確なままとなる．そのため，多ターンにわたる相互反論を通じて争点を掘り下げることが難しく，議論の過程が対話的に発展しているかどうかを判断することも困難となる．
+以上より，止揚（統合）を弁証法的に妥当な形で生成するためには，統合に先立って多ターンの議論を通じて争点を段階的に明確化し，各主張の前提構造と，それらの前提間の衝突関係を，攻撃関係および依存関係として構造的に表現・管理する枠組みが必要である．
 
-さらに，このような議論構造の不明確さは，最終的に生成される統合（synthesis）にも影響を及ぼす．すなわち，どの反論がどの理由で却下され，どの論点が保持されたのかを，議論過程から再構成することが難しく，止揚がどのような根拠に基づいて成立しているのかが不透明になりやすい．Anghelらも，固定的な三段フローに基づく弁証法的推論には限界があることを指摘しており，より自然な多ターンの対話的交換へ拡張する必要性を述べている．
-
-以上より，止揚（統合）を弁証法的に妥当な形で生成するためには，統合に先立って多ターンの議論を通じて争点を明確化し，どの前提がどのように衝突しているのかを構造的に扱う枠組みが必要である．
-
-次章ではこの課題に対し，議論フェーズと統合フェーズを明確に分離し，対立点の明確化を経て止揚論証へ接続するプロトコルと，それを適用するシステムのアーキテクチャについて述べる．
 
 
 \end{relatedwork}
@@ -179,302 +200,348 @@ Anghelら[5]は，複数のLLMを用いて弁証法的推論を模倣する枠�
 \begin{system}
 \clearpage
 \section{弁証法的推論による質問応答システム}\label{sec-system}
-\subsection{概要}\label{subsec-language}
-本システムは，ユーザから与えられたトピックと、対話を行うエージェントのスタンスを入力とし，複数のLLMエージェントによる対話的推論を通じて，最終的に止揚論証（統合された回答）を生成するマルチエージェント推論システムである．
+\subsection{概要}\label{subsec-overview}
+本システムは，ユーザから与えられたトピック（Issue）と、対話を行うエージェントのスタンスを入力とし，2体のLLMエージェントによる対話的推論を通じて，最終的に止揚論証（統合された回答）を生成するマルチエージェント推論システムである．
 本研究では，弁証法的推論の規則や進行手順を「弁証法プロトコル」として抽象化し，それを実行するための計算基盤としてシステムアーキテクチャを設計する．
 本章では，提案プロトコルの内容には立ち入らず，システムを構成する各コンポーネントと，それらの間の情報の流れに焦点を当てる．
 
 
-\subsection{システム構成}\label{subsec-language}
-本システムは，図\ref{fig:architecture-overview}に示すように，入力，議論制御，弁証法プロトコル，状態 / 動作，LLM Agents，出力の6つの主要コンポーネントから構成される．
-各コンポーネントは明確な責務分離に基づいて設計されており，議論プロトコルの変更や拡張が，システム全体の構造に影響を与えにくい構成となっている．
+\subsection{システム構成}\label{subsec-architecture}
+本システムは，図\ref{fig:architecture-overview}に示すように，入力，議論制御，弁証法プロトコル，LLM Agents，出力の5つの主要コンポーネントから構成される．
 
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\linewidth]{archirtecture.png}
+  \includegraphics[width=1.0\linewidth]{archirtecture.png}
   \caption{提案システムの全体アーキテクチャ}
   \label{fig:architecture-overview}
 \end{figure}
 
 
-\subsubsection{入力}
-入力コンポーネントは，ユーザから与えられる議論トピックや初期条件を受け取り，議論制御コンポーネントに引き渡す役割を担う．
+入力コンポーネントはトピックと各エージェントのスタンスをユーザーから受け取り，議論制御コンポーネントに渡す．
 
-入力には，以下の4つが含まれる．
-\begin{itemize}
-  \item Issue（議論対象となるトピック）
-  \item AG1's stance（エージェント1の結論）
-  \item AG2's stance（エージェント2の結論）
-\end{itemize}
+以下に本システムの入力例を示す．(図\ref{fig:input})
 
-Issueはエージェントがそれぞれの立場に基づいて議論を行うためのトピックである．
-AG1's stance，AG2's stanceはトピックに対するエージェントのスタンスである．
-本研究では弁証法的に議論を行い，さまざまなトピックに対して統合を達成する対話プロトコルを提案することがゴールであるため，エージェントのトレーニング・チューニングなどIssue依存の操作は行わないものとする．
-したがって，対立はユーザーの入力によって意図的に形成しつつ，結論を導く論理や前提はエージェントに推論させることで，多角的な議論を促進する．
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1.0\linewidth]{input.png}
+  \caption{入力例}
+  \label{fig:input}
+\end{figure}
+
 
-以下に本システムの入力例を示す
-\begin{itemize}
-  \item Issue: 「学校清掃は生徒が行うべきか」
-  \item AG1's stance: 
-  
-  「
-      あなたは議論エージェントAG1です。
+今回は，Kido, Kuriharaの対話例を再現することを目的として，文献中のカメラ選択問題をもとに，各エージェントのスタンスを事実および規則の集合として与えている．
+AG1は「コンパクトで軽く，ユーザーフレンドリーなカメラ」を重視する立場，AG2は「高画質かつバッテリー性能に優れたカメラ」を重視する立場をそれぞれ表しており，両者の価値基準が対立する設定となっている．
 
-      あなたは、学校清掃は教育に含まれるべきであり、生徒が行うのが望ましいと考えています。
+このように，各エージェントのスタンスを明示的な命題および推論規則として与えることで，議論フェーズにおいて，どの前提に基づいて主張が構成され，どの規則が衝突しているのかを構造的に追跡可能とする．
+以降では，本入力を用いて，多ターンの議論を通じて対立点がどのように明確化され，最終的に止揚論証がどのように生成されるかを示す．
 
-      清掃は単なる作業ではなく、責任感や協力、公共心を身につけるための実践であり、教室の外で学べる重要な教育活動だと捉えています。
+次に，弁証法プロトコルコンポーネントは，議論の状態と，エージェントが行う操作を定義したものである．
+議論制御コンポーネントは弁証法プロトコルを参照しながら議論を進行し，エージェントが行う操作をLLM エージェントに指示する．
+LLM エージェントは指示に対して返答を行い，議論制御コンポーネントに返す．
+使用するモデルは GPT 5-mini である．
+プロトコルにおいて議論の終了状態に遷移した時，議論制御コンポーネントは議論を終了し，最終回答を出力する．
 
-      あなたは社会性や主体性、共同体の一員としての意識を特に重視します。もし清掃を教育に含めないと、学校生活の行動から学びを切り離してしまい、生徒が共同体を支える経験を得る機会を失うと主張できます。
-  」
-
-  \item AG2's stance: 
-  
-  「
-    あなたは議論エージェントAG2です。
-
-    あなたは、学校清掃は教育に含まれず、生徒にやらせるべきではないと考えています。
-
-    清掃は本質的に衛生管理や施設管理の領域に属する仕事であり、教育目的を理由に正当化すると、安全面や責任の所在が曖昧になりやすいと捉えています。
-
-    あなたは安全性と衛生水準、責任の明確さ、そして学習時間の確保を重視します。
-
-    教育だと言うのであれば、本来は目標・指導・安全基準などが明確に設計されるべきですが、現実には運営の負担を生徒に移しているだけになりがちだ、と反論できます。
-  」
-\end{itemize}
+次章では，本研究の主題である弁証法プロトコルの詳細設計について説明する．
 
 
 
-\subsubsection{議論制御}
-議論制御コンポーネントは，弁証法プロトコルに従って議論全体の進行を管理する．
-このコンポーネントは，入力されたIssue，各エージェントの結論を元に弁証法議論を実行し，定義されたフェーズごとの発話をLLM Agentsに要求する．
-適用するプロトコルによって終了状態に遷移したとき，システムは対話の履歴をログに出力し，終了する．
-具体的なプロトコルの終了状態に関しては，次章で説明するが，本システムでは必ずしも最終回答が出力されるとは限らないことに注意したい．
+\subsubsection{プロトコル設計}
 
-また本システムでは，対話用のLLM エージェントのモデルとしてGPT-4.1-nanoを使用する．
+本研究で提案する弁証法プロトコルは，\textbf{論証構築フェーズ}，\textbf{反論フェーズ}，\textbf{統合フェーズ}の3段階から構成される．各フェーズでは，LLMエージェントの出力をあらかじめ定義した論証スキーマに従って制約することで，議論の構造化と収束性，および高次な止揚論証の生成を両立させる．
 
-システムが終了するとき，議論制御コンポーネントによって対話ログと，存在すれば最終回答が出力される．
-
+\paragraph{論証構築フェーズ}
+論証構築では，各エージェントはシステム入力として与えられた Issue および自身のスタンスに基づき，最初の主張（main argument）を1つ生成する．
+この際，主張は単なる自然文ではなく，推論規則の列（rules）から構成される論証として表現される．
+各規則は，結論を導くための最小限の前提（antecedent.strong）および，証拠不在を仮定する弱否定（antecedent.weak\_negation）から，結論（consequent）を導く形式を取り，規則列は結論に至る推論の依存関係を明示する順序構造を持つ．
+また，各論証は，結論集合（Conc）および仮定集合（Ass）を明示的に保持する．
+これにより，各エージェントの主張がどの前提に基づいて構成されているかを構造的に把握可能とする．
 
-\subsection{弁証法プロトコル}\label{sec-protocol}
-これからは本システムで適用される弁証法プロトコルについて紹介する．
-本章では，プロトコル全体の概要と，各フェーズへの遷移条件，終了条件，そしてフェーズ内の状態に対応するLLM エージェントへの指示内容を説明する．
-
-\subsubsection{概要}
-弁証法プロトコルは主に論証構築，反論，統合の3つのフェーズから構成され，各エージェントの論証に対して，お互いに反論を述べ合い，最終的に1つの止揚論証を構築する．
-
-論証構築では，エージェントはシステムの入力で与えられた各エージェントのstanceをもとに，議論の対象となる最初の主張を行う．
-
-反論フェーズでは、以下のようにエージェントが相互に発言をし，議論を反復的に行う．
+\paragraph{反論フェーズ}
+反論フェーズでは，以下の手続きを反復的に実行することで，エージェント間の対立を段階的に掘り下げる．
 
 \begin{enumerate}
-  \item 最初の主張，もしくは相手の再反論に対し相手のエージェントが反論可能かを判断し，可能であれば反論，そうでなければ，相手の論証が正当化されたとして，議論を終了する．
-  \item 反論ができた場合、次に最初に主張を述べたエージェントが同様にその反論に対して再反論可能かを判断し，可能であれば再反論，そうでなければ，敗北した（defeated）として，議論を終了する．
-  \item これらを設定する反論の最大回数まで反復して行う．
+\item 相手の直前の論証（初期主張または再反論）に対して，反論が可能かを判定する．反論が可能な場合は，\textit{rebut}（結論への反駁）または \textit{undercut}（推論規則の前提への攻撃）のいずれかを選択し，新たな論証を構築する．反論が不可能な場合，相手の論証が正当化されたとみなし，議論を終了する．
+\item 反論が生成された場合，今度は先に主張したエージェントが，同様にその反論に対して再反論可能かを判定し，可能であれば再反論を構築し，不可能であれば当該エージェントの論証が\textit{defeated}（敗北）したものとして議論を終了する．
+\item 上記の手続きを，あらかじめ設定した最大反論回数に達するまで反復する．
 \end{enumerate}
 
-統合フェーズでは，反論フェーズで得られた議論履歴（Argument群）を入力として，以下のステップで最終回答（止揚論証）を構築する．
+反論においても，出力はすべて論証スキーマに従い，攻撃方法（rebut / undercut），前提（strong, weak\_negation），結論（consequent），および Conc, Ass を明示する．
+これにより，どの前提がどのように攻撃され，どの仮定が否定されたのかを，論証間の関係として形式的に追跡可能とする．
+
+\paragraph{統合フェーズ}
+統合フェーズでは，反論フェーズで得られた議論履歴（複数の Argument）を入力とし，以下の段階を経て最終回答（止揚論証）を構築する．
 
 \begin{enumerate}
-  \item 議論履歴から統合の前提（背景知識）を整理する．
-  これまでの主張・反論で実際に使われた事実関係や因果関係を抽出し，双方が共有している前提と，
-  どの条件下で各主張が成立するのか（成立条件・制約）を明確化する．
-  ここでは議論に現れていない新しい知識は持ち込まず，あくまで履歴に基づいて土台を作る．
+\item 性質化（Characterization）：
+対立する2つの代表的な論証について，それぞれの前提（antecedent.strong）と結論（consequent）を「性質レベル」に抽象化する．ここでは，特定の対象を指す表現を除去し，どのような条件や価値基準のもとで主張が成立しているかを明示する．
 
-  \item それぞれの立場の論証を，背景知識に沿って補強し，統合可能な形に整える．
-  各論証の結論は変えずに，背景知識から一貫して導ける範囲で前提（根拠）を補い，
-  どの条件を満たすならその主張が妥当かをより具体化する．
-  これにより，「単なる言い分のぶつけ合い」ではなく，「成立条件を明示した主張」として両者を比較できる状態にする．
+\item 一般化（Generalization）：
+性質化された2つの論証（C1, C2）に基づき，両者が受け入れ可能な合意核（E）を構築する．
+このとき，共通する前提が存在する場合は必ず含めるとともに，元の前提をそのまま再利用するのではなく，両者を包摂する上位概念として再構成する．
+これにより，対立していた評価軸を同時に満たしうる条件集合と結論を導出する．
 
-  \item 補強された2つの論証を踏まえ，両者を包摂する上位概念を導出して最終結論（止揚論証）を構築する．
-  背景知識の中に，双方の価値（評価軸）を同時に満たしうる第三の選択肢や枠組みが見いだせる場合は，
-  それを優先して採用する．
-  そうでない場合も，単に両者の理由を並べる折衷ではなく，
-  対立していた価値の前提を捉え直し，両者が納得可能な形で再構成した結論として提示する．
+\item 最終回答の生成（Answer）：
+得られた合意核Eに基づき，Eの前提条件を可能な限り満たす具体的な解決策を提示する．
+この際，元の論証に含まれていた個別の結論をそのまま再利用することは避け，合意核に基づく新たな視点から，両者が納得可能な形で再構成された結論として最終回答（止揚論証）を出力する．
 \end{enumerate}
+
+以上のプロトコルにより，本研究では，多ターンの議論を通じて対立する前提構造を明示化し，それらを性質化・一般化することで，単なる折衷ではなく，上位概念に基づく高次の止揚論証を体系的に生成することを可能とする．
 
 
 \subsubsection{メッセージスキーマ}
-本研究では、Kido, Kuriharaの統合アルゴリズム及び議論形式に準拠させつつ，LLMを用いた幅広い議論を可能にするため，以下のようなメッセージスキーマを定義する
+本研究では、Kido, Kuriharaの統合アルゴリズム及び議論形式に準拠させつつ，LLMを用いた幅広い議論を可能にするため，図\ref{fig:message-schema}に示すようなメッセージスキーマを定義する
+これにより，エージェントは論証の構造を把握し，反論のフェーズにおいて，rebutではConcを，undercutではAssを明示的に対象にした上で，反論を行うことができる．
 
-\begin{verbatim}
-{
-  "Argument": {
-    "type": "main",
-    "argument": "結論とその根拠を含んだ自然言語の推論文",
-    "support": [
-      "推論文を構成する根拠1",
-      "推論文を構成する根拠2",
-      ...
-    ]
-  }
-}
-\end{verbatim}
-
-これにより，エージェントは論証の構造を把握し，反論のフェーズにおいて，rebutではargumentを，undercutではsupportを明示的に対象にした上で，反論を行うことができる．
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1.0\linewidth]{schema.png}
+  \caption{メッセージスキーマ(JSON)}
+  \label{fig:message-schema}
+\end{figure}
 
 最後に，弁証法プロトコルの全体像をシーケンス図で表す（図\ref{fig:protocol-overview}）．
+これの図は
 この図では，それぞれの最初の主張をそれぞれA1，A2で示す．
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{protocol.png}
-  \caption{提案システムの全体アーキテクチャ}
+  \includegraphics[width=1.0\linewidth]{protocol.png}
+  \caption{弁証法プロトコルを用いたシーケンス図}
   \label{fig:protocol-overview}
 \end{figure}
 
 
 \end{system}
 
-\begin{evaluation}
+\begin{experiment}
 \clearpage
-\section{評価手法}\label{sec-evaluation}
-本章では，提案する弁証法プロトコルの有効性を検証するための評価手法について述べる．
-本研究における評価の主目的は，提案プロトコルによって生成される議論過程および止揚論証が，
-既存の計算的弁証法モデルに基づく形式例と意味的に整合しているかを検証することである．
+\section{実験}\label{sec-experiment}
 
-従来の質問応答システムの評価では，単一の正解を持つタスクに対する正解率が主な指標として用いられることが多い．
-しかし，弁証法的議論に基づく推論では，議題に対するただ1つの回答を定義することが難しい．
-そこで本研究では，既存研究との意味的一致を中心とした評価を行う．
+\subsection{実験の目的}\label{subsec-experiment-purpose}
 
-
-\subsection{評価方針}\label{subsec-eval-policy}
-本研究における評価方針は，以下の二点に基づく．
+本章では，前章で定義した弁証法プロトコルを実際の問題設定に適用し，どのような対話が生成され，最終的な止揚論証がどのような過程を経て導出されるのかを，具体的な対話例を通して示すことを目的とする．
 
-第一に，提案プロトコルによって生成される議論構造が，Kido，Kurihara によって定義された計算的弁証法の形式例と意味的に一致しているかを検証する．
-ここでは，論証の構築順序，反論関係（defeat 関係）の形成，および議論の終了後に，統合が生成される過程に着目する．
+また，本章で得られた対話ログおよび最終回答は，次章において，既存研究との整合性および統合結果の妥当性を評価するための基礎データとして用いる．
 
-第二に，生成される止揚論証が，既存の論証の単なる折衷や再表現ではなく，対立構造を踏まえた新たな判断根拠（warrant）に基づく論証として構成されているかを確認する．
+\subsection{対話の実行と結果}\label{subsec-experiment-setup}
 
-なお，本研究で用いる評価は，提案プロトコルの形式的妥当性および意味的一貫性の検証を目的としており，多様なトピックに対する汎用的性能評価は本章の対象外とする．
+\subsubsection{問題設定}
+題材には，Kido，Kurihara[1] 第6章で用いられているカメラ購買問題を採用した．
+議題（Issue）は「どのカメラを購入すべきか」とし，2体のエージェントには，
+それぞれ異なる事実および推論規則からなるスタンスを入力として与えた．
+本問題設定では，一方のエージェントが「携帯性・操作性」を重視する立場，
+他方のエージェントが「画質・バッテリー性能」を重視する立場をとることで，
+評価基準の異なる2つの観点が意図的に対立するよう設計されている．
 
-
-\subsection{評価データ}\label{subsec-eval-data}
-評価には，Kido，Kurihara によって提案されたカメラ購買問題に関する対話例（文献[1] 第6章）を用いる．
-この対話例では，「どのカメラを買うか」という議題に対して，それぞれの知識，理論をもった2体のエージェントが議論を行うものである．
-以下に，それぞれのエージェントの知識と理論を，実際にプロンプトとして与える形で表現した図を示す．
+入力の具体例については，3章で示した図\ref{fig:input}の通りである．
+このように，各エージェントの知識および判断規則を明示的な命題と推論規則として与えることで，対話の過程において，どの前提がどの結論を支え，どの規則同士が衝突しているのかを，構造的に追跡可能な設定とした．
 
 
+\subsubsection{実行方法}
+本実験では，前章で定義した論証スキーマ（rules，Conc，Ass）および弁証法プロトコルをそのまま適用した．
+各ターンにおけるエージェントの出力はすべて構造化された論証として生成・記録され，
+推論規則の列，結論集合（Conc），および仮定集合（Ass）が明示的に保持される．
 
-文献中では，各エージェントが順に main argument を生成し，それらが相互に defeat 関係を形成することで，いずれの論証も正当化されない状態に到達した後，既存の論証の単なる組み合わせではない新たな main argument が生成される．
-本研究では，この一連の推論過程を評価基準として用いる．
+これにより，どの前提がどの結論を導いているのか，
+反論においてどの結論が否定され，あるいはどの仮定が攻撃されているのか，
+さらに統合フェーズにおいて，対立する前提構造がどのように再編成されているのかを，
+対話の進行とともに追跡可能とした．
 
-本研究では，カメラcに関する事実をAG1の初期プロンプトに埋め込むのではなく，統合フェーズ直前に構築される背景知識へ追加する設計を採用した．この理由は次の通りである．
+なお，本実験では，新たな規則や外部知識を途中で導入することは行わず，
+入力として与えたスタンスと，提案プロトコルに基づく生成結果のみを用いて議論を進行させた．
+これにより，提案手法そのものの振る舞いを純粋に観察できる実験設定とした．
 
-第一に，初期プロンプトは「立場（価値観・評価軸）」を与えるための入力として位置づけ，環境に関する具体的事実（各カメラの属性や在庫・価格など）は統合処理における参照対象として別管理することで，\textbf{立場情報と世界知識の役割を分離}した．これにより，エージェントの人格（何を重視するか）を固定したまま，事実条件のみを変更する実験が可能となり，実装と評価の再現性が高まる．
 
-第二に，カメラcの情報を初期プロンプトに含めると，反論フェーズの早期から「第三の選択肢」へ議論が逃げやすくなり，対立構造の掘り下げが起こらないまま議論が収束する危険がある．本研究の目的は，まず対立する評価軸（warrant）の衝突を明示化し，その上で統合（止揚）に移行することであるため，\textbf{第三の選択肢は統合フェーズで初めて参照可能}とする方がプロトコルの意図に整合する．
+\subsubsection{対話ログの可視化}
+以下では，主張，反論，再反論，および統合の各段階で生成された論証を，
+対話ログの画像として提示する（図\ref{fig:dialogue}）．
 
-第三に，既存研究では知識ベース $S_1$ にカメラcの事実が含まれているが，LLMにおいてそれを初期プロンプトへ直接埋め込むと，議論中にどの知識が参照されたかが不透明になりやすい．そこで本研究では，統合フェーズにおいて背景知識（facts/rules）を明示的に構築し，さらに「追加情報適用後」としてカメラcの事実を別枠で付与することで，\textbf{止揚に用いた知識をログとして追跡可能}にした．
+各ログには，当該ターンで用いられた推論規則（rules），結論集合（Conc），仮定集合（Ass），
+および攻撃の種別（rebut / undercut）が併記されており，
+論証間の攻撃関係，どの前提が争点となっているか，
+統合段階で前提構造がどのように抽象化・一般化されているかを視覚的に確認できる．
 
-以上より，本研究では初期プロンプトを立場提示に限定し，カメラcの情報は背景知識として統合直前に追加する設計とした．これにより，対立の明示化→統合という段階構造を保ったまま，既存研究と同様に第三の選択肢を含む止揚論証の生成を可能にした．
-
-
-
-\subsection{評価方法}\label{subsec-eval-method}
-本研究では，提案プロトコルの評価を以下の二段階で行う．
-
-
-\subsubsection{既存研究との意味的比較}\label{subsec-eval-compare}
-まず，提案プロトコルによって生成された議論過程および止揚論証が，Kido，Kurihara による形式的な弁証法的推論例と意味的に一致しているかを検証する．
-
-具体的には，以下の観点から比較を行う．
-
-\begin{itemize}
-  \item main argumentの構築：各エージェントが入力されたスタンスに基づいて初期の main argument を構築しているか
-  \item 反論の構築：各エージェントが入力されたスタンスに基づいて反論（rebut，undercut）を行うか
-  \item 議論の終了後，既存の論証の単なる再表現ではなく，拡張された論証（warrant）に基づく止揚論証が構築されているか
-  \item 最終的に正当化される止揚論証が，文献中の形式例と同様の意味内容を持っているか
-\end{itemize}
-
-これらの観点から，提案プロトコルが計算的弁証法モデルと同等の意味構造を再現できているかを評価する．
-
-
-\subsubsection{ルーブリック評価（補助的評価）}\label{subsec-eval-rubric}
-次に，生成された各論証および止揚論証について，自然言語としての一貫性および理解可能性を確認する．
-本研究では，Anghel らによって提案されたルーブリック評価手法を参考にし，論証の論理的明瞭性や記述の一貫性といった観点から，定性的な確認を行う．
-ただし，本研究における主たる評価基準は，既存の計算的弁証法モデルとの意味的一致であり，あくまで補助的な評価として位置付ける．
-
-\end{evaluation}
-
-\begin{result}
-\clearpage
-\section{評価結果}\label{sec-result}
-
-\subsection{評価結果の概要}
-本章では，\ref{sec-evaluation}で述べた評価手法に基づき，提案プロトコルによって生成された議論過程および止揚論証の評価結果を示す．
-評価は，(1) 既存の計算的弁証法モデルとの意味的一致，(2) 生成された自然言語表現の妥当性，の二点から行った．
-
-
-\subsubsection{既存研究との比較結果}
-Kido および Kurihara によるカメラ購買問題の対話例を入力とし，提案プロトコルを適用した結果，文献に示された弁証法的推論過程と意味的に整合した議論構造が生成されることを確認した．
-
-具体的には，各エージェントが Issue に対して自身のスタンスに基づく main argument を構築し，それらが相互に defeat 関係を形成する過程が再現された．
-反論フェーズにおいては，文献とはことなる挙動が得られた．
-
-それは，文献で想定されているように，一方の論証が相手を反論不能にし，justified / defeatedの状態が明確に確定して議論が収束する状況が，LLMベースの対話では観察されなかった点である．
-
-Kido, Kuriharaの議論的用例では，有限回の応酬ののち，いずれかのエージェントが相手の論証に対してこれ以上有効な反論（defeating argument）を構成できなくなり，その時点で論証の正当化 / 敗北が決定されることが前提となっている．
-しかし，本研究の実装では，エージェントが自然言語で反論を生成するため，反論の焦点（攻撃対象）が前提・結論・評価軸の間で揺れやすく，反論の形式も言い換えや観点の追加によって容易に継続してしまう．
-その結果，「反論不能」状態が発生しにくく，議論が最大回数に達するまで終了しなかった．
-
-その後，統合フェーズにおいて，対立する main argument と構築した背景知識を入力とし，既存の論証の単なる折衷ではない新たな拡張論証に基づく 止揚論証 が生成された．
-この止揚論証は，文献中の形式例と同様に，先行する論証では導出不可能であった判断を可能にするものとして位置づけられる．
-
-以上より，提案プロトコルは，計算的弁証法モデルに基づく形式的推論構造を保持したまま，その推論過程をLLM エージェントによる対話として再現できていることが確認された．
-
-図\ref{fig:dialogue-example}に，対話例の抜粋を示す．
 \begin{figure}[H]
   \centering
-  \IfFileExists{dialogue-example.png}{
-    \includegraphics[width=0.95\linewidth]{dialogue-example.png}
-  }{
-    \fbox{\parbox{0.95\linewidth}{Dialogue example figure placeholder}}
-  }
-  \caption{対話例（抜粋）}
-  \label{fig:dialogue-example}
+  \includegraphics[width=0.9\linewidth]{dialogue.png}
+  \caption{対話実行のログ可視化}
+  \label{fig:dialogue}
 \end{figure}
 
+本図に示すように，本研究のプロトコルでは，多ターンの議論を通じて対立点が段階的に明確化され，
+最終的に性質化および一般化を経て，単なる折衷ではない止揚論証が構築されていることが確認できる．
+次章では，これらの対話結果および最終回答を，既存の形式例と比較することで，
+提案手法の妥当性について評価を行う．
+
+
+\subsubsection{止揚論証の生成}
+対話の結果，いずれの主張も単独では正当化されない状態となり，
+反論フェーズで得られた議論履歴に対して統合フェーズが適用された．
+図\ref{fig:synthesis}は，性質化および一般化を経て得られた合意核に基づき，
+最終的な止揚論証が構築される過程を示したものである．
+この結果は，個別の結論の単なる折衷ではなく，
+対立していた評価軸を上位概念のもとで再構成した解として与えられている．
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{synthesis.png}
+  \caption{統合フェーズによる止揚論証の生成}
+  \label{fig:synthesis}
+\end{figure}
+
+\end{experiment}
+
+
+\begin{evaluation}
+\clearpage
+\section{評価}\label{sec-evaluation}
+
+\subsection{評価手法}\label{subsec-eval-policy}
+本章では，提案する弁証法プロトコルの妥当性を検証するための評価手法について述べる．
+本研究における評価の主目的は，提案プロトコルによって生成される議論過程および止揚論証が，
+既存の計算的弁証法モデルに基づく形式例と，構造および意味の両面において対応しているかを確認することである．
+
+従来の質問応答システムの評価では，単一の正解を持つタスクに対する正解率が主な指標として用いられることが多い．
+しかし，弁証法的議論に基づく推論では，議題に対する唯一の正解を定義することが困難であり，
+議論の進行構造，反論関係の形成，および最終的な統合の構成そのものが評価対象となる．
+本研究では，提案プロトコルの動作が既存研究で示されている形式例をどの程度再現できているかに着目し，
+生成過程の対応関係をトレースすることによって妥当性を検証する．
+
+本研究における評価方針は，以下の二点に基づく．
+
+\begin{itemize}
+  \item 構造的一致：
+  提案プロトコルによって生成される議論構造が，
+  Kido，Kurihara によって定義された計算的弁証法の形式例と対応しているかを検証する．
+  具体的には，論証の構築順序，反論関係（defeat 関係）の形成，および議論終了後に統合が生成される過程について，
+  形式例と照合しながら確認する．
+
+  \item 統合の再現性：
+  生成される最終回答が，既存の形式例における統合結果と意味的に対応しているかを検証する．
+  ここでは，新規性や一般性の評価は行わず，対立構造の整理や判断根拠の構成が，
+  既存の統合例をどの程度再現できているかに着目する．
+\end{itemize}
+
+なお，本章の評価は，提案プロトコルが既存の計算的弁証法モデルの振る舞いを
+どの程度正確にトレースできているかを確認することを目的としており，
+多様なトピックに対する汎用的性能や定量的な比較評価は対象外とする．
+
+
 
-\subsubsection{ルーブリック評価結果}
-次に，
-生成された各論証および最終的な止揚論証について，
-自然言語としての妥当性を確認した．
-本評価では，
-論証の一貫性，
-結論と前提の対応関係，
-および止揚論証の理解可能性といった観点から，
-定性的な確認を行った．
 
-その結果，
-生成された論証はいずれも，
-前提と結論の関係が明示されており，
-自然言語として破綻のない形で表現されていることが確認された．
-また，
-止揚論証についても，
-対立する価値基準を単に並列するのではなく，
-より高次の判断基準として再構成する形で記述されており，
-人間にとって意味的に解釈可能な表現となっていた．
+\subsection{評価に用いる比較データ}\label{subsec-eval-data}
+本研究では，提案する弁証法プロトコルの妥当性を検証するための比較対象として，
+Kido，Kurihara によって提案されたカメラ購買問題に関する対話例（文献[1] 第6章）を用いる．
+本節では，評価の基準となる形式例を明確にするため，文献中で用いられている問題設定および対話過程を省略せずに示す．
 
-ただし，
-本研究におけるルーブリック評価は，
-生成結果の品質を定量的に比較することを目的としたものではなく，
-既存の計算的弁証法モデルとの意味的一致を前提とした上で，
-自然言語表現が破綻していないかを確認するための
-補助的な評価である．
+まず，文献では次の議題と2つの知識ベースが与えられる．
+\[
+Issue = buy(x) \land camera(x)
+\]
 
-\end{result}
+\begin{align*}
+S_1 = \{\, & camera(a),\ camera(c),\ compact(a),\ light(a), battery(c, \mathrm{long}),\\
+           & userFriendly(c),\ overTheBudget(b), compact(x) \land light(x) \\
+           & \land camera(x) \rightarrow buy(x), overTheBudget(x) \rightarrow \lnot buy(x)\\
+           & compact(x) \land light(x) \rightarrow userFriendly(x)\, \}
+\end{align*}
 
+\begin{align*}
+S_2 = \{\, & camera(b),\ outOfStock(a),\ battery(b, \mathrm{long}), resolution(b, \mathrm{high})\\
+           & resolution(x, \mathrm{high}) \land battery(x, \mathrm{long}), \quad \land camera(x) \rightarrow buy(x),\\
+           & outOfStock(x) \rightarrow \lnot buy(x)\, \}
+\end{align*}
+
+ここで，$S_1$ および $S_2$ は，それぞれエージェント1およびエージェント2に与えられる知識ベースを表す．
+$S_1$ は携帯性や使いやすさを重視する立場に対応しており，
+$S_2$ は高画質およびバッテリー性能を重視する立場に対応している．
+両者は評価基準が異なるため，購入すべきカメラについて対立した判断を導く．
+
+次に，文献中で示されている対話の進行を原表記に基づいて示す．
+ここで $\mathrm{Arg}_{i}^{j}$ は，「エージェント $i$ が構築した $j$ 番目の論証」を表す．
+
+まず，エージェント1が主張を構築し，エージェント2がこれを反論する．
+\begin{flalign*}
+\mathrm{Arg}_{1}^{1}
+&= [compact(a), light(a), camera(a),\quad compact(a) \land light(a) \land camera(a)&&\\
+   &  \rightarrow buy(a)]&&
+\end{flalign*}
+(I want to buy 'a' Since it is a compact and light camera.)
+
+\begin{flalign*}
+\mathrm{Arg}_{2}^{2}
+&= [outOfStock(a),\; outOfStock(a) \rightarrow \lnot buy(a)]&&
+\end{flalign*}
+(It is out of stock.)
+
+この反論に対して，エージェント1はこれを打ち負かす論証を構築できない．
+続いて，エージェント2が新たな主張を行い，エージェント1がこれを反論する．
+
+\begin{flalign*}
+\mathrm{Arg}_{2}^{3}
+&= [resolution(b, \mathrm{high}),\ battery(b, \mathrm{long}),\ camera(b), resolution(b, \mathrm{high})&&\\
+   & \land battery(b, \mathrm{long}) \land camera(b) \rightarrow buy(b)]&&
+\end{flalign*}
+(Would you like 'b?' Because it is a high-resolution camera with a long battery life.)
+
+\begin{flalign*}
+\mathrm{Arg}_{1}^{4}
+&= [overTheBudget(b),\; overTheBudget(b) \rightarrow \lnot buy(b)]&&
+\end{flalign*}
+(It exceeds the budget.)
+
+この結果，$\mathrm{Arg}_{1}^{1}$ および $\mathrm{Arg}_{2}^{3}$ のいずれも正当化されず，
+両エージェントはこれ以上の主張を構築できない状態となる．
+そこで，エージェント1は，両者の根拠（warrant）を統合した新たな主張を構築する．
+
+\begin{flalign*}
+\mathrm{Arg}_{1}^{5}
+&= [userFriendly(c),\ battery(c, \mathrm{long}),\ camera(c), userFriendly(c)&&\\
+   &  \land battery(c, \mathrm{long}) \land camera(c) \rightarrow buy(c)]&&
+\end{flalign*}
+(I will then buy ``c.'' Since this is a user-friendly camera with a long battery life.)
+
+この $\mathrm{Arg}_{1}^{5}$ は，携帯性・使いやすさとバッテリー性能という異なる評価軸を同時に満たす対象として $c$ を選択するものであり，
+$\mathrm{Arg}_{1}^{1}$ と $\mathrm{Arg}_{2}^{3}$ の根拠を包摂した統合的な論証である．
+
+
+
+\subsection{評価結果}\label{subsec-eval-result}
+本節では，前節で示した Kido，Kurihara の形式例と本研究の実験結果を比較し，
+提案プロトコルが弁証法的議論および統合過程をどの程度再現できているかを検証する．
+
+まず，議論の進行構造について，本研究のプロトコルでは，
+各エージェントが主張を構築し，相手がそれに対して反論を行い，
+いずれかが反論を構成できなくなるまで再反論を反復する手続きを明示的に実装している．
+この流れは，文献例における
+$\mathrm{Arg}_{1}^{1}$ と $\mathrm{Arg}_{2}^{2}$，
+および $\mathrm{Arg}_{2}^{3}$ と $\mathrm{Arg}_{1}^{4}$ の相互攻撃構造と対応しており，
+提案プロトコルが計算的弁証法における基本的な議論構造を再現していることを示している．
+
+次に，議論終了後の統合過程に関して，本研究では，
+反論フェーズで得られた論証を性質化および一般化によって抽象化し，
+両立場を包摂する合意核を導出した上で最終回答を構築する．
+これは，Kido，Kurihara の例において，
+$\mathrm{Arg}_{1}^{1}$ と $\mathrm{Arg}_{2}^{3}$ の warrant を基に
+$\mathrm{Arg}_{1}^{5}$ を構成している操作と意味的に対応している．
+
+さらに，本研究の実験結果においても，最終的に得られた止揚論証は，
+「a を買う」「b を買う」といった個別の主張の単なる折衷ではなく，
+携帯性・使いやすさと性能・持続性という異なる評価軸を上位の判断基準のもとで再構成した解として生成されている．
+この点から，提案プロトコルは，既存の計算的弁証法モデルに基づく統合過程と整合した形で，
+止揚論証を構築できているといえる．
+
+以上より，本研究の手法は，Kido，Kurihara によって示された形式例と構造的および意味的に対応する議論構造と統合過程を再現しており，
+弁証法的推論に基づく質問応答の計算モデルとして妥当であることが確認された．
+
+\end{evaluation}
 
 \begin{consideration}
 \clearpage
 \section{考察}\label{sec-consideration}
 
-
-\subsection{考察}
-
-\subsection{展望}
-
+
 
 \end{consideration}
 
@@ -482,15 +549,198 @@ Kido, Kuriharaの議論的用例では，有限回の応酬ののち，いずれ
 \clearpage
 \section{おわりに}\label{sec-conclusion}
 
+本研究では，大規模言語モデル（LLM）を用いたマルチエージェント対話に，
+計算的弁証法の理論的枠組みを導入することで，
+対立する主張を形式的に扱い，その上で止揚論証を生成する質問応答システムを提案した．
+論証を構造化スキーマとして表現し，rebut および undercut に基づく反論フェーズと，
+性質化および一般化に基づく統合フェーズからなる弁証法プロトコルを設計・実装した点に本研究の特徴がある．
+さらに，Kido，Kurihara の形式例を評価基準として用いることで，
+提案手法が既存の計算的弁証法モデルと意味的に対応する議論構造および統合過程を再現できることを示した．
+
+本研究の意義は，LLM を用いた対話型質問応答を，
+単なる自然言語生成にとどめず，
+推論過程を明示的に扱う弁証法的推論システムとして位置づけた点にある．
+対立する立場を単に併記するのではなく，
+論証構造を明確化し，その上位概念に基づいて統合的な判断を導出する枠組みを与えたことは，
+価値観や評価基準の異なる立場間の対話を計算的に支援する一つの方法を示すものである．
+
+一方で，本研究にはいくつかの課題も残されている．
+評価は既存文献の形式例をトレースすることに主眼を置いており，
+多様なトピックに対する汎用的な性能やスケーラビリティの検証には至っていない．
+また，議論の進行は外部の制御モジュールに依存しており，
+エージェント自身が議論状態を把握して次の操作を選択する自律性については十分に検討できていない．
+
+今後の発展としては，主に三つの方向性が考えられる．
+第一に，本研究では評価対象を特定の形式例に限定したが，
+本プロトコルをさまざまなトピックに適用し，
+社会的・倫理的問題や価値観の対立を含む多様な議題において，
+議論構造および統合過程がどの程度一貫して再現されるかを検証することが重要である．
+これにより，本手法の適用範囲と限界を体系的に明らかにできると考えられる．
+
+第二に，本研究では特定の LLM を用いてエージェントを構成したが，
+今後はモデル規模や学習方針の異なる複数の LLM を用いたエージェント間対話を通じて，
+議論の進行特性や統合結果の差異を比較することが課題である．
+また，プロンプト設計や内部表現の調整（チューニング）を通じて，
+反論の生成傾向や統合の抽象度がどのように変化するかを分析することで，
+弁証法的推論に適したエージェント設計指針の確立が期待される．
+
+第三に，議論過程におけるエージェントの発言の一貫性に対する評価枠組みの構築が挙げられる．
+具体的には，各エージェントが初期の立場や評価基準を議論の進行中にどの程度維持しているか，
+また統合段階においてそれらがどのように再構成されているかを定量的に測定する指標の設計が求められる．
+これにより，最終的な出力結果のみならず，推論過程そのものの安定性や妥当性を評価することが可能になると考えられる．
+
+本研究が，弁証法的推論と大規模言語モデルの融合に向けた基盤的な試みとして，
+今後の計算的対話システムの発展に寄与することを期待する．
 \end{conclusion}
+
+
 
 \clearpage
 \acknowledgments				% 謝辞
-本研究の遂行にあたり，ご指導・ご助言を賜った関係者の皆様に深く感謝する．
+本研究を行うにあたり，熱心なご指導，ご助言を賜りました村上陽平教授に深く感謝申し上げます．また，普段からお世話になっている社会知能研究室の皆様にも心より感謝申し上げます．
 
+
 
 \clearpage
 \bibliographystyle{kuisunsrt}			% 文献スタイルの指定
 \bibliography{references}				% 参考文献の出力
 
+
+\clearpage
+\appendix				% 付録
+
+\section{プロンプトテンプレート}
+\label{sec:prompt_templates}
+
+本付録では，提案システムにおいて使用される5つのプロンプトテンプレートの詳細を示す．
+
+\subsection{主議論構築プロンプト (MAIN\_ARGUMENT)}
+\label{subsec:main_argument_prompt}
+
+\begin{verbatim}
+あなたは論理的な議論を構築する専門家です。
+以下の質問に対して、事実を基に論理的な議論を構築してください。
+
+質問: {question}
+
+利用可能な事実:
+{facts}
+
+以下の形式で議論を構築してください:
+- Claim (主張): 質問に対する答え
+- Premises (前提): 主張を支持する事実のリスト
+- Inference Rule (推論規則): 前提から主張を導く論理的規則
+
+出力形式:
+Claim: [主張]
+Premises: [前提1, 前提2, ...]
+Inference Rule: [推論規則]
+\end{verbatim}
+
+\subsection{反駁議論プロンプト (DEFEATING\_ARGUMENT)}
+\label{subsec:defeating_argument_prompt}
+
+\begin{verbatim}
+あなたは批判的思考の専門家です。
+以下の議論に対する反駁を構築してください。
+
+元の議論:
+Claim: {claim}
+Premises: {premises}
+Inference Rule: {inference_rule}
+
+利用可能な事実:
+{facts}
+
+反駁の種類:
+{attack_type}
+
+以下の形式で反駁議論を構築してください:
+- Claim (主張): 反駁する内容
+- Premises (前提): 反駁を支持する事実のリスト
+- Inference Rule (推論規則): 前提から反駁を導く論理的規則
+- Attack Type (攻撃タイプ): rebut または undercut
+
+出力形式:
+Claim: [反駁主張]
+Premises: [前提1, 前提2, ...]
+Inference Rule: [推論規則]
+Attack Type: [攻撃タイプ]
+\end{verbatim}
+
+\subsection{特性化プロンプト (CHARACTERIZATION)}
+\label{subsec:characterization_prompt}
+
+\begin{verbatim}
+あなたは議論評価の専門家です。
+以下の議論の特性を評価してください。
+
+議論:
+Claim: {claim}
+Premises: {premises}
+Inference Rule: {inference_rule}
+
+以下の観点から0.0から1.0のスコアで評価してください:
+1. Acceptability (受容性): 前提の信頼性と妥当性
+2. Relevance (関連性): 前提が主張とどの程度関連しているか
+3. Sufficiency (十分性): 前提が主張を支持するのに十分か
+
+出力形式:
+Acceptability: [0.0-1.0のスコア]
+Relevance: [0.0-1.0のスコア]
+Sufficiency: [0.0-1.0のスコア]
+Explanation: [評価の理由]
+\end{verbatim}
+
+\subsection{一般化プロンプト (GENERALIZATION)}
+\label{subsec:generalization_prompt}
+
+\begin{verbatim}
+あなたは論理的推論の専門家です。
+以下の議論フレームワークから最終的な結論を導いてください。
+
+議論フレームワーク:
+{argumentation_framework}
+
+各議論のステータス:
+{argument_status}
+
+元の質問: {question}
+
+すべての議論を考慮し、最も支持される結論を導いてください。
+複数の有効な議論がある場合は、それらを統合してください。
+
+出力形式:
+Conclusion: [最終結論]
+Supporting Arguments: [結論を支持する議論のリスト]
+Reasoning: [結論に至った理由]
+\end{verbatim}
+
+\subsection{回答生成プロンプト (ANSWER)}
+\label{subsec:answer_prompt}
+
+\begin{verbatim}
+あなたは質問応答システムの専門家です。
+以下の情報を基に、質問に対する最終的な回答を生成してください。
+
+質問: {question}
+
+導出された結論: {conclusion}
+
+議論の詳細:
+{argumentation_details}
+
+以下の要件を満たす回答を生成してください:
+1. 簡潔で理解しやすい
+2. 結論を明確に述べる
+3. 必要に応じて根拠を示す
+4. 自然な日本語/英語で記述
+
+出力形式:
+Answer: [質問に対する回答]
+Confidence: [0.0-1.0の信頼度スコア]
+Justification: [回答の根拠]
+\end{verbatim}
+
+
 \end{document}
