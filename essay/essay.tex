@@ -5,6 +5,16 @@
 \usepackage[dvipdfmx]{graphicx}
 \usepackage{float}
 \usepackage{amsmath}
+\usepackage{listings}
+
+\lstset{
+  basicstyle=\small\ttfamily,
+  breaklines=true,
+  breakatwhitespace=true,
+  columns=flexible,
+  keepspaces=true,
+  showstringspaces=false
+}
 
 % Editor-friendly section delimiters (do not affect output)
 \newenvironment{introduction}{\par\ignorespaces}{\par\ignorespacesafterend}
@@ -451,20 +461,17 @@ Kido, Kuriharaの提案手法は，入力となる規則列（warrant）のペ�
 \[
 Issue = buy(x) \land camera(x)
 \]
-
 \begin{align*}
 S_1 = \{\, & camera(a),\ camera(c),\ compact(a),\ light(a), battery(c, \mathrm{long}),\\
            & userFriendly(c),\ overTheBudget(b), compact(x) \land light(x) \\
            & \land camera(x) \rightarrow buy(x), overTheBudget(x) \rightarrow \lnot buy(x)\\
            & compact(x) \land light(x) \rightarrow userFriendly(x)\, \}
 \end{align*}
-
 \begin{align*}
 S_2 = \{\, & camera(b),\ outOfStock(a),\ battery(b, \mathrm{long}), resolution(b, \mathrm{high})\\
            & resolution(x, \mathrm{high}) \land battery(x, \mathrm{long}), \quad \land camera(x) \rightarrow buy(x),\\
            & outOfStock(x) \rightarrow \lnot buy(x)\, \}
 \end{align*}
-
 ここで，$S_1$ および $S_2$ は，それぞれエージェント1およびエージェント2に与えられる知識ベースを表す．
 $S_1$ は携帯性や使いやすさを重視する立場に対応しており，$S_2$ は高画質およびバッテリー性能を重視する立場に対応している．
 両者は評価基準が異なるため，購入すべきカメラについて対立した判断を導く．
@@ -479,7 +486,6 @@ $S_1$ は携帯性や使いやすさを重視する立場に対応しており�
    &  \rightarrow buy(a)]&&
 \end{flalign*}
 (I want to buy 'a' Since it is a compact and light camera.)
-
 \begin{flalign*}
 \mathrm{Arg}_{2}^{2}
 &= [outOfStock(a),\; outOfStock(a) \rightarrow \lnot buy(a)]&&
@@ -490,14 +496,12 @@ $S_1$ は携帯性や使いやすさを重視する立場に対応しており�
 したがって，$\mathrm{Arg}_{1}^{1}$ はdefeatedとなり，エージェント2の主張へ移る．
 
 続いて，エージェント2が新たな主張を行い，エージェント1がこれに反論する．
-
 \begin{flalign*}
 \mathrm{Arg}_{2}^{3}
 &= [resolution(b, \mathrm{high}),\ battery(b, \mathrm{long}),\ camera(b), resolution(b, \mathrm{high})&&\\
    & \land battery(b, \mathrm{long}) \land camera(b) \rightarrow buy(b)]&&
 \end{flalign*}
 (Would you like 'b?' Because it is a high-resolution camera with a long battery life.)
-
 \begin{flalign*}
 \mathrm{Arg}_{1}^{4}
 &= [overTheBudget(b),\; overTheBudget(b) \rightarrow \lnot buy(b)]&&
@@ -506,7 +510,6 @@ $S_1$ は携帯性や使いやすさを重視する立場に対応しており�
 
 この結果，$\mathrm{Arg}_{1}^{1}$ および $\mathrm{Arg}_{2}^{3}$ のいずれも正当化されず，さらに両エージェントはこれ以上の主張を構築できない状態となる．
 そこで，エージェント1は，対立する主張のwarrant（$\mathrm{Arg}_{1}^{1}$, $\mathrm{Arg}_{2}^{3}$）に対して統合のアルゴリズム（Reasoning Method）を適用し，両者の根拠（warrant）を統合した新たな主張を構築する．
-
 \begin{flalign*}
 \mathrm{Arg}_{1}^{5}
 &= [userFriendly(c),\ battery(c, \mathrm{long}),\ camera(c), userFriendly(c)&&\\
@@ -546,8 +549,7 @@ $\mathrm{Arg}_{1}^{1}$ と $\mathrm{Arg}_{2}^{3}$ の根拠を包摂した統合
    &  \rightarrow buy(a)]&&
 \end{flalign*}
 
-本研究の実行結果においても，
-対話の初期段階でエージェント1は，
+本研究の実行結果においても，対話の初期段階でエージェント1は，
 【コンパクトである】【軽量である】【カメラである】
 という性質を前提とし，
 「コンパクトかつ軽量なカメラは購入すべきである」
@@ -672,59 +674,34 @@ $\mathrm{Arg}_{1}^{1}$ と $\mathrm{Arg}_{2}^{3}$ の根拠を包摂した統合
 \clearpage
 \section{考察}\label{sec-consideration}
 
-
-
 \end{consideration}
 
 \begin{conclusion}
 \clearpage
 \section{おわりに}\label{sec-conclusion}
 
-本研究では，大規模言語モデル（LLM）を用いたマルチエージェント対話に，
-計算的弁証法の理論的枠組みを導入することで，
-対立する主張を形式的に扱い，その上で止揚論証を生成する質問応答システムを提案した．
-論証を構造化スキーマとして表現し，rebut および undercut に基づく反論フェーズと，
-性質化および一般化に基づく統合フェーズからなる弁証法プロトコルを設計・実装した点に本研究の特徴がある．
-さらに，Kido，Kurihara の形式例を評価基準として用いることで，
-提案手法が既存の計算的弁証法モデルと意味的に対応する議論構造および統合過程を再現できることを示した．
+本研究では，大規模言語モデル（LLM）を用いたマルチエージェント対話に，計算的弁証法の理論的枠組みを導入することで，対立する主張を形式的に扱い，その上で止揚論証を生成する質問応答システムを提案した．
+論証を構造化スキーマとして表現し，rebut および undercut に基づく反論フェーズと，性質化および一般化に基づく統合フェーズからなる弁証法プロトコルを設計・実装した点に本研究の特徴がある．
+さらに，Kido，Kurihara の形式例を評価基準として用いることで，提案手法が既存の計算的弁証法モデルと意味的に対応する議論構造および統合過程を再現できることを示した．
 
-本研究の意義は，LLM を用いた対話型質問応答を，
-単なる自然言語生成にとどめず，
-推論過程を明示的に扱う弁証法的推論システムとして位置づけた点にある．
-対立する立場を単に併記するのではなく，
-論証構造を明確化し，その上位概念に基づいて統合的な判断を導出する枠組みを与えたことは，
-価値観や評価基準の異なる立場間の対話を計算的に支援する一つの方法を示すものである．
+本研究の意義は，既存の計算的弁証法モデルに基づく形式的な議論過程を，大規模言語モデルを用いた自然言語対話として構造的に再現可能であることを示した点にある．
+論証構造と反論の手法を明確に定義することで，LLMが持つ幅広い一般的な知識を引き出しつつも，表層的な反論の応酬を防ぎ，建設的な議論を促進することができた．
+またそれにより，自由発話では困難な議論の停止が可能になり，推論プロトコルとしての終了を保証する．
 
-一方で，本研究にはいくつかの課題も残されている．
-評価は既存文献の形式例をトレースすることに主眼を置いており，
-多様なトピックに対する汎用的な性能やスケーラビリティの検証には至っていない．
-また，議論の進行は外部の制御モジュールに依存しており，
-エージェント自身が議論状態を把握して次の操作を選択する自律性については十分に検討できていない．
+一方で，本研究にはいくつかの課題も残されている．評価は既存文献の形式例をトレースすることに主眼を置いており，多様なトピックに対する汎用的な性能やスケーラビリティの検証には至っていない．
 
 今後の発展としては，主に三つの方向性が考えられる．
-第一に，本研究では評価対象を特定の形式例に限定したが，
-本プロトコルをさまざまなトピックに適用し，
-社会的・倫理的問題や価値観の対立を含む多様な議題において，
-議論構造および統合過程がどの程度一貫して再現されるかを検証することが重要である．
+第一に，本研究では評価対象を特定の形式例に限定したが，本プロトコルをさまざまなトピックに適用し，社会的・倫理的問題や価値観の対立を含む多様な議題において，議論構造および統合過程がどの程度一貫して再現されるかを検証することが重要である．
 これにより，本手法の適用範囲と限界を体系的に明らかにできると考えられる．
 
-第二に，本研究では特定の LLM を用いてエージェントを構成したが，
-今後はモデル規模や学習方針の異なる複数の LLM を用いたエージェント間対話を通じて，
-議論の進行特性や統合結果の差異を比較することが課題である．
-また，プロンプト設計や内部表現の調整（チューニング）を通じて，
-反論の生成傾向や統合の抽象度がどのように変化するかを分析することで，
-弁証法的推論に適したエージェント設計指針の確立が期待される．
+第二に，本研究では特定の LLM を用いてエージェントを構成したが，今後はモデル規模や学習方針の異なる複数の LLM を用いたエージェント間対話を通じて，議論の進行特性や統合結果の差異を比較することが課題である．
+また，プロンプト設計や内部表現の調整（チューニング）を通じて，反論の生成傾向や統合の抽象度がどのように変化するかを分析することで，弁証法的推論に適したエージェント設計指針の確立が期待される．
 
-第三に，議論過程におけるエージェントの発言の一貫性に対する評価枠組みの構築が挙げられる．
-具体的には，各エージェントが初期の立場や評価基準を議論の進行中にどの程度維持しているか，
-また統合段階においてそれらがどのように再構成されているかを定量的に測定する指標の設計が求められる．
+第三に，議論過程におけるエージェントの発言の一貫性に対する評価枠組みの構築が挙げられる．具体的には，各エージェントが初期の立場や評価基準を議論の進行中にどの程度維持しているか，また統合段階においてそれらがどのように再構成されているかを定量的に測定する指標の設計が求められる．
 これにより，最終的な出力結果のみならず，推論過程そのものの安定性や妥当性を評価することが可能になると考えられる．
 
-本研究が，弁証法的推論と大規模言語モデルの融合に向けた基盤的な試みとして，
-今後の計算的対話システムの発展に寄与することを期待する．
+本研究が，弁証法的推論と大規模言語モデルの融合に向けた基盤的な試みとして，今後の計算的対話システムの発展に寄与することを期待する．
 \end{conclusion}
-
-
 
 \clearpage
 \acknowledgments				% 謝辞
@@ -740,138 +717,260 @@ $\mathrm{Arg}_{1}^{1}$ と $\mathrm{Arg}_{2}^{3}$ の根拠を包摂した統合
 \clearpage
 \appendix				% 付録
 
-\section{プロンプトテンプレート}
+\section{プロンプト}
 \label{sec:prompt_templates}
 
 本付録では，提案システムにおいて使用される5つのプロンプトテンプレートの詳細を示す．
 
-\subsection{主議論構築プロンプト (MAIN\_ARGUMENT)}
+\textbf{論証構築}
 \label{subsec:main_argument_prompt}
 
-\begin{verbatim}
-あなたは論理的な議論を構築する専門家です。
-以下の質問に対して、事実を基に論理的な議論を構築してください。
+\begin{lstlisting}
+Task:
+Based on the given Issue and your stance, construct one main Argument representing your position.
 
-質問: {question}
+Constraint:
+The main Argument must follow the structure of argumentation below.
 
-利用可能な事実:
-{facts}
+Argumentation structure:
+  - rules: An array of inference rules. Each rule represents an inference from premises (antecedent) to a conclusion (consequent)
+    Important: rules have an order. The consequent of an earlier rule can be used in the antecedent.strong of a later rule.
+    Include only the minimum necessary rules to derive the final conclusion (consequent of the last rule).
+    - id: Rule identifier (r1, r2, ...)
+    - antecedent.strong: A list of natural language statements representing the minimum necessary premises to derive the conclusion (may include consequents from previous rules)
+    - antecedent.weak_negation: A list of natural language statements representing assumptions that there is no evidence for certain arguments (not negation of facts) necessary to derive the conclusion
+    - consequent: A natural language statement of the conclusion (conclusion only) derived from strong and weak_negation
+  - Conc: A list collecting the consequent of each rule
+  - Ass: A list collecting the weak_negation of each rule
 
-以下の形式で議論を構築してください:
-- Claim (主張): 質問に対する答え
-- Premises (前提): 主張を支持する事実のリスト
-- Inference Rule (推論規則): 前提から主張を導く論理的規則
+Output only the following JSON:
+{
+  "Argument": {
+    "rules": [
+      {
+        "id": "r1",
+        "antecedent": {
+          "strong": [
+            "Minimum necessary premise 1 to derive conclusion", 
+            "Minimum necessary premise 2 to derive conclusion", 
+            ...
+          ],
+          "weak_negation": [
+            "Assumption that there is no evidence for an argument (not negation of facts) premise 1", 
+            "Assumption that there is no evidence for an argument (not negation of facts) premise 2", 
+            ...
+          ]
+        },
+        "consequent": "Natural language statement of the conclusion (conclusion only) derived from strong and weak_negation",
+      }
+    ],
+    ...
+    "Conc": [
+      "consequent of r1", 
+      "consequent of r2", 
+    ...],
+    "Ass": [
+      "weak_negation of r1", 
+      "weak_negation of r2", 
+      ...
+    ]
+  }
+}
+\end{lstlisting}
 
-出力形式:
-Claim: [主張]
-Premises: [前提1, 前提2, ...]
-Inference Rule: [推論規則]
-\end{verbatim}
-
-\subsection{反駁議論プロンプト (DEFEATING\_ARGUMENT)}
+\textbf{反論}
 \label{subsec:defeating_argument_prompt}
 
-\begin{verbatim}
-あなたは批判的思考の専門家です。
-以下の議論に対する反駁を構築してください。
+\begin{lstlisting}
+The above is the opponent's argument.
+Each has the following meaning.
+The argument has the following structure:
+- rules: An array of inference rules. Each rule represents an inference from premises (antecedent) to a conclusion (consequent)
+  Important: rules have an order. The consequent of an earlier rule can be used in the antecedent.strong of a later rule.
+  Include only the minimum necessary rules to derive the final conclusion (consequent of the last rule).
+  - id: Rule identifier (r1, r2, ...)
+  - (attack): Attack method (rebut or undercut)
+  - antecedent.strong: A list of minimum necessary premises to derive the conclusion (may include consequents from previous rules)
+  - antecedent.weak_negation: A list of assumptions that there is no evidence for certain arguments (not negation of facts) necessary to derive the conclusion
+  - consequent: Conclusion (conclusion only) derived from strong and weak_negation
+- Conc: A list collecting the consequent of each rule
+- Ass: A list collecting the weak_negation of each rule
 
-元の議論:
-Claim: {claim}
-Premises: {premises}
-Inference Rule: {inference_rule}
+Task:
+Determine whether you can defeat the opponent's Argument, and if possible, generate one counterargument.
+Answer NO only if you truly cannot counterargue.
 
-利用可能な事実:
-{facts}
+Constraint:
+For counterarguments, choose one of the following attack methods.
+Counterarguments must follow the argumentation structure below.
+Counterarguments must ""always"" be stated from your own stance.
+Counterarguments must ""never"" reuse your past antecedent.strong.
 
-反駁の種類:
-{attack_type}
+Attack methods:
+・rebut: When your stance semantically contradicts or conflicts with a proposition in the opponent's argument's conclusion (Conc)
+  → Construct an inference rule that negates the opponent's conclusion or derives a conclusion incompatible with the opponent's conclusion
+  → If the opponent's argument's strong is empty, rebut is not possible.
+・undercut: When your stance can provide evidence that a proposition in the opponent's argument's assumption (Ass) is correct
+  → Construct an inference rule that negates the weak negation assumption used in the opponent's inference rule, or shows that the assumption does not hold
+  → If the opponent's argument's weak_negation is empty, undercut is not possible.
 
-以下の形式で反駁議論を構築してください:
-- Claim (主張): 反駁する内容
-- Premises (前提): 反駁を支持する事実のリスト
-- Inference Rule (推論規則): 前提から反駁を導く論理的規則
-- Attack Type (攻撃タイプ): rebut または undercut
+Argumentation structure:
+- rules: An array of inference rules. Each rule represents an inference from premises (antecedent) to a conclusion (consequent)
+  Important: rules have an order. The consequent of an earlier rule can be used in the antecedent.strong of a later rule.
+  Include only the minimum necessary rules to derive the final conclusion (consequent of the last rule).
+  - id: Rule identifier (r1, r2, ...)
+  - attack: Attack method (rebut or undercut)
+  - antecedent.strong: A list of minimum necessary premises to derive the conclusion (may include consequents from previous rules)
+  - antecedent.weak_negation: A list of assumptions that there is no evidence for certain arguments (not negation of facts) necessary to derive the conclusion
+  - consequent: Conclusion (conclusion only) derived from strong and weak_negation
+- Conc: A list collecting the consequent of each rule
+- Ass: A list collecting the weak_negation of each rule
 
-出力形式:
-Claim: [反駁主張]
-Premises: [前提1, 前提2, ...]
-Inference Rule: [推論規則]
-Attack Type: [攻撃タイプ]
-\end{verbatim}
+Special note:
+When the opponent's argument is a counterargument and it is a rebut, the attack method must be undercut.
 
-\subsection{特性化プロンプト (CHARACTERIZATION)}
+Output only the following JSON:
+{
+  "can_defeat": "YES or NO",
+  "Argument": {
+    "rules": [
+      {
+        "id": "r1",
+        "attack": "rebut or undercut",
+        "antecedent": {
+          "strong": [
+            "Minimum necessary premise 1 to derive conclusion", 
+            "Minimum necessary premise 2 to derive conclusion", 
+            ...
+          ],
+          "weak_negation": [
+            "Assumption that there is no evidence for an argument (not negation of facts) premise 1", 
+            "Assumption that there is no evidence for an argument (not negation of facts) premise 2",
+            ...
+          ]
+        },
+        "consequent": "For rebut: statement negating opponent's conclusion; For undercut: statement showing opponent's rule cannot be applied",
+      }
+    ],
+    ...
+    "Conc": [
+      "consequent of r1", 
+      "consequent of r2", 
+      ...
+    ],
+    "Ass": [
+      "weak_negation of r1", 
+      "weak_negation of r2", 
+      ...
+    ]
+  }
+}
+\end{lstlisting}
+
+\textbf{性質化}
 \label{subsec:characterization_prompt}
 
-\begin{verbatim}
-あなたは議論評価の専門家です。
-以下の議論の特性を評価してください。
+\begin{lstlisting}
+The above are two conflicting arguments, Argument1 and Argument2.
+Each has the following meaning.
+The argument has the following structure:
+  - antecedent.strong: A list representing the properties of the minimum necessary premises to derive the conclusion
+  - consequent: The conclusion (conclusion only) derived from strong
 
-議論:
-Claim: {claim}
-Premises: {premises}
-Inference Rule: {inference_rule}
+Task:
+Characterize the given Argument1 and Argument2.
+This operation clarifies the characteristics of each of the two conflicting arguments.
 
-以下の観点から0.0から1.0のスコアで評価してください:
-1. Acceptability (受容性): 前提の信頼性と妥当性
-2. Relevance (関連性): 前提が主張とどの程度関連しているか
-3. Sufficiency (十分性): 前提が主張を支持するのに十分か
+Constraint:
+Output must follow the argumentation structure below.
 
-出力形式:
-Acceptability: [0.0-1.0のスコア]
-Relevance: [0.0-1.0のスコア]
-Sufficiency: [0.0-1.0のスコア]
-Explanation: [評価の理由]
-\end{verbatim}
+Argumentation structure:
+- antecedent.strong: A list representing the properties of the minimum necessary premises to derive the conclusion
+- consequent: The property of the conclusion (conclusion only) derived from strong
 
-\subsection{一般化プロンプト (GENERALIZATION)}
+Output only the following JSON:
+Output:
+{
+  "Argument": {
+    "C1": {
+      "strong": [
+        "Property 1 of minimum necessary premises to derive conclusion (do not include expressions uniquely identifying specific objects)",
+        "Property 2 of minimum necessary premises to derive conclusion (do not include expressions uniquely identifying specific objects)",
+        ...
+      ],
+      "consequent": "Natural language statement representing the property of the conclusion (conclusion only) derived from strong",
+    },
+    "C2": {
+      "strong": [
+        "Property 1 of minimum necessary premises to derive conclusion (do not include expressions uniquely identifying specific objects)",
+        "Property 2 of minimum necessary premises to derive conclusion (do not include expressions uniquely identifying specific objects)",
+        ...
+      ],
+      "consequent": "Natural language statement representing the property of the conclusion (conclusion only) derived from strong (do not include expressions uniquely identifying specific objects)",
+    }
+  }
+}
+\end{lstlisting}
+
+\textbf{一般化}
 \label{subsec:generalization_prompt}
 
-\begin{verbatim}
-あなたは論理的推論の専門家です。
-以下の議論フレームワークから最終的な結論を導いてください。
+\begin{lstlisting}
+The above are C1 and C2, representing the properties of a pair of conflicting arguments.
 
-議論フレームワーク:
-{argumentation_framework}
+Each argument (C1, C2) has the following structure:
+Argumentation structure:
+- antecedent.strong: A list representing the properties of the minimum necessary premises to derive the conclusion
+- consequent: The property of the conclusion (conclusion only) derived from strong
 
-各議論のステータス:
-{argument_status}
+Task:
+Based on the given C1 and C2, construct one consensus core E (Generalization result) that both parties can easily accept.
 
-元の質問: {question}
+Constraint:
+If there are facts (strong) common to both, they must be included.
+Do not use the strong of C1 and C2 as they are.
+Each premise of the consensus core must be able to encompass both positions.
 
-すべての議論を考慮し、最も支持される結論を導いてください。
-複数の有効な議論がある場合は、それらを統合してください。
+Output only the following JSON:
+Output:
+{
+  "Argument": {
+    "E": {
+      "strong": [
+        "Consensus core premise (natural language) 1",
+        "Consensus core premise (natural language) 2",
+        "..."
+      ],
+      "consequent": "Conclusion (conclusion only) derived from the consensus core"
+    }
+  }
+}
+\end{lstlisting}
 
-出力形式:
-Conclusion: [最終結論]
-Supporting Arguments: [結論を支持する議論のリスト]
-Reasoning: [結論に至った理由]
-\end{verbatim}
-
-\subsection{回答生成プロンプト (ANSWER)}
+\textbf{最終回答}
 \label{subsec:answer_prompt}
 
-\begin{verbatim}
-あなたは質問応答システムの専門家です。
-以下の情報を基に、質問に対する最終的な回答を生成してください。
+\begin{lstlisting}
+The above are the warrants of two conflicting arguments Argument1 and Argument2, and the consensus core E of both.
 
-質問: {question}
+Structure of premise information:
+- Warrant of Argument1, Argument2: Premises and conclusions of individual cases claimed by each agent
+- Consensus core E: Property-level rules that both parties can agree on
 
-導出された結論: {conclusion}
+Task:
+Based on the given consensus core E, present a solution that satisfies the conditions of E.strong as much as possible, and make it the final answer.
 
-議論の詳細:
-{argumentation_details}
+Constraint:
+- Individual conclusions appearing in the warrants of Argument1 and Argument2 must not be used as they are in the final answer
+- The final answer must be a concrete solution that satisfies E.strong
 
-以下の要件を満たす回答を生成してください:
-1. 簡潔で理解しやすい
-2. 結論を明確に述べる
-3. 必要に応じて根拠を示す
-4. 自然な日本語/英語で記述
-
-出力形式:
-Answer: [質問に対する回答]
-Confidence: [0.0-1.0の信頼度スコア]
-Justification: [回答の根拠]
-\end{verbatim}
+Output only the following JSON:
+{
+  "FinalAnswer": {
+    "final_answer": "Final answer (simple)"
+  }
+}
+\end{lstlisting}
 
 
 \end{document}
