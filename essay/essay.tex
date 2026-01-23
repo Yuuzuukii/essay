@@ -6,6 +6,8 @@
 \usepackage{float}
 \usepackage{amsmath}
 \usepackage{listings}
+\usepackage{breqn}
+
 
 \lstset{
   basicstyle=\small\ttfamily,
@@ -151,12 +153,12 @@ In experiments reproducing existing dialogue examples, the generated final diale
 近年，大規模言語モデル（LLM）を用いた質問応答は，さまざまなアプリケーション，システムで実用化が進んでいる.
 同時に世界では，多文化共生がますます進んでおり，さまざまな価値観を持つ人々が共に暮らす社会ができている．
 質問応答には情報検索としての役割に加えて，そのような社会に適応するために，異なる価値観を持つ人々の相互理解を促進する，合意可能な回答を生成する役割も求められている．
-この要請に対し，複数の役割や価値観を付与したLLMエージェント同士の対話により結論を導くマルチエージェント議論の枠組みが提案されている．
+この背景に対し，複数の役割や価値観を付与したLLMエージェント同士の対話により結論を導くマルチエージェント議論の枠組みが提案されている．
 しかし既存手法の多くは，対立する立場をもとに勝敗を決めるディベート的議論，あるいは双方の主張を並列した表層的な折衷案に収束しやすい．
 その結果，対立を保持したまま共通項を抽出し，新たな価値・制度・概念の再構成として解決を導く止揚的な回答生成には至りにくいという課題がある．
 
-そこで本研究では，記号論理で形式化された弁証法的推論の枠組みに基づき，複数のLLMエージェントが論証構築・相互反論・統合を段階的に行う対話プロトコルを提案する．
-具体的には，Kido, Kurihara らの弁証法議論形式[1]を参照し，記号論理で示された対話プロトコルと統合の手法を，2体のLLMエージェントを用いた弁証法的推論による質問応答システムに適用する．
+そこで本研究では，記号論理で形式化された弁証法的推論の枠組みに基づき，複数のLLMエージェントが論証構築・反論・統合を段階的に行う対話プロトコルを提案する．
+具体的には，Kido, Kuriharaらの弁証法議論形式[1]を参照し，記号論理で示された対話プロトコルと統合の手法を，2体のLLMエージェントを用いた弁証法的推論による質問応答システムに適用する．
 プロトコルは論証構築フェーズ，反論フェーズ，統合フェーズから構成され，論証構築とそれに対する反論は，2体の対話エージェントによって相互に行われる．
 
 本提案手法を実現するにあたり，取り組むべき課題は以下の2点である．
@@ -168,7 +170,7 @@ LLMの自由発話による議論は，発話の役割や論点が明示的に�
 
 \noindent\textbf{高次な止揚論証の生成}
 
-Kido, Kurihara [1]によって提案された統合のアルゴリズム（Reasoning Method）は，記号論理に対する操作は可能であるものの，自然言語に対する操作は不可能であり，これをそのまま用いて止揚論証を構築することは困難である．
+Kido, Kurihara[1]によって提案された統合のアルゴリズム（Reasoning Method）は，記号論理に対する操作は可能であるものの，自然言語に対する操作は不可能であり，これをそのまま用いて止揚論証を構築することは困難である．
 本研究では，統合のための論証スキーマも提案した上で，Reasoning Methodを意味的に解釈し，指示プロンプトに反映することで，LLM上で一般化（generalization）の操作を擬似的に実装する．
 これにより，対立する論証の前提構造を再編成し，単なる折衷ではなく，上位概念に基づく高次な止揚論証の生成を可能とする．
 また，Kido, Kuriharaが実際に行っていた対話例を本提案システム上でも実行し，同様の止揚論証が得られることを確認した．
@@ -188,7 +190,7 @@ Kido, Kurihara [1]によって提案された統合のアルゴリズム（Reaso
 
 Sawamura，Umedaら[2][3]は，Prakken, Sartorら[4]の拡張論理プログラミングに基づき，弁証法議論の枠組み（Computational Dialectics）を提案している．
 この枠組みでは，論証の構築と，相手の論証に対する攻撃（rebut, undercut）を段階的に行い，複数のエージェントが対話を通じて弁証法的に統合を行う議論フレームワークを形式定義している．
-ただし，Sawamura，Umedaらは文献の中で，具体的な止揚論証の導出方法は "a sort of oracle" であると述べており，形式定義される止揚論証の意味的実体や，その構築方法は未実装であった．
+ただし，Sawamura，Umedaらは文献の中で，具体的な止揚論証の導出方法は"a sort of oracle"であると述べており，形式定義される止揚論証の意味的実体や，その構築方法は未実装であった．
 
 これに対して，Kido, Kuriharaら[1]は，SpecializationおよびGeneralizationによって，形式定義された止揚論証を構築する手法を提案した．
 この手法により，対話を通じて双方の立場を包含する統合を行うための形式的操作が明確化された．
@@ -211,6 +213,16 @@ Anghelら[5]は，複数のLLMを用いて弁証法的推論を模倣する枠�
 
 以上より，止揚（統合）を弁証法的に妥当な形で生成するためには，統合に先立って多ターンの議論を通じて争点を段階的に明確化し，各主張の前提構造と，それらの前提間の衝突関係を，攻撃関係および依存関係として構造的に表現・管理する枠組みが必要である．
 
+これらの関連研究から，記号論理に基づく弁証法議論は，攻撃関係や統合操作を形式的に定義できる一方で，
+知識ベースへの強い依存や，止揚論証の意味的解釈の困難さといった課題を抱えていることが分かる．
+一方，大規模言語モデルを用いたマルチエージェント対話は，自然言語による柔軟な推論や多様な視点の導入を可能にするが，
+議論構造や攻撃関係が明示的に管理されないため，弁証法的に妥当な止揚へと収束させることが難しい．
+
+そこで本研究では，記号論理に基づく弁証法議論の構造的厳密性と，
+大規模言語モデルの持つ自然言語理解・生成能力を統合することを目的とし，
+弁証法的推論の進行規則を明示的に定義した「弁証法プロトコル」に基づく質問応答システムを提案する．
+次章では，本研究で設計したシステム全体の構成と，各コンポーネントの役割について述べる．
+
 
 
 \end{relatedwork}
@@ -226,9 +238,11 @@ Anghelら[5]は，複数のLLMを用いて弁証法的推論を模倣する枠�
 
 \subsection{システム構成}\label{subsec-architecture}
 本システムは，図\ref{fig:architecture-overview}に示すように，入力，議論制御，弁証法プロトコル，LLM Agents，出力の5つの主要コンポーネントから構成される．
+これらのコンポーネントは，対話の進行管理と論証構造の制御を行う部分と，自然言語による主張生成を行う部分を分離する形で配置されている．
+そのため，議論の流れや論証の整合性を保ったまま，LLMの生成能力を柔軟に利用できる構成となっている．
 
 
-\begin{figure}[H]
+\begin{figure}[b]
   \centering
   \includegraphics[width=1.0\linewidth]{archirtecture.png}
   \caption{提案システムの全体アーキテクチャ}
@@ -236,11 +250,11 @@ Anghelら[5]は，複数のLLMを用いて弁証法的推論を模倣する枠�
 \end{figure}
 
 
-入力コンポーネントはトピックと各エージェントのスタンスをユーザーから受け取り，議論制御コンポーネントに渡す．
+\clearpage
 
-以下に本システムの入力例を示す．(図\ref{fig:input})
+入力コンポーネントはトピックと各エージェントのスタンスをユーザーから受け取り，議論制御コンポーネントに渡す（入力例の図\ref{fig:input}）.
 
-\begin{figure}[H]
+\begin{figure}[b]
   \centering
   \includegraphics[width=1.0\linewidth]{input.png}
   \caption{入力例}
@@ -255,9 +269,9 @@ AG1は「コンパクトで軽く，ユーザーフレンドリーなカメラ�
 以降では，本入力を用いて，多ターンの議論を通じて対立点がどのように明確化され，最終的に止揚論証がどのように生成されるかを示す．
 
 次に，弁証法プロトコルコンポーネントは，議論の状態と，エージェントが行う操作を定義したものである．
-議論制御コンポーネントは弁証法プロトコルを参照しながら議論を進行し，エージェントが行う操作をLLM エージェントに指示する．
-LLM エージェントは指示に対して返答を行い，議論制御コンポーネントに返す．
-使用するモデルは GPT 5-mini である．
+議論制御コンポーネントは弁証法プロトコルを参照しながら議論を進行し，エージェントが行う操作をLLMエージェントに指示する．
+LLMエージェントは指示に対して返答を行い，議論制御コンポーネントに返す．
+使用するモデルはGPT 5-miniである．
 プロトコルにおいて議論の終了状態に遷移した時，議論制御コンポーネントは議論を終了し，最終回答を出力する．
 
 次章では，本研究の主題である弁証法プロトコルの詳細設計について説明する．
@@ -267,7 +281,7 @@ LLM エージェントは指示に対して返答を行い，議論制御コン�
 \subsubsection{プロトコル設計とメッセージスキーマ}
 
 本研究で提案する弁証法プロトコルは，論証構築フェーズ，反論フェーズ，統合フェーズの3段階から構成される．
-各フェーズのLLMエージェントの指示には，L出力をあらかじめ定義した論証スキーマに従わせるように制御する．
+各フェーズのLLMエージェントの指示には，出力をあらかじめ定義した論証スキーマに従わせるように制御する．
 また，本プロトコルの終了条件は以下の2通りである．
 
 \begin{itemize}
@@ -280,11 +294,11 @@ LLM エージェントは指示に対して返答を行い，議論制御コン�
 
 \textbf{論証構築フェーズ}
 
-論証構築では，各エージェントはシステム入力として与えられた Issue および自身のスタンスに基づき，最初の主張（main argument）を1つ生成し，反論フェーズに遷移する.
+論証構築では，各エージェントはシステム入力として与えられたIssueおよび自身のスタンスに基づき，最初の主張（main argument）を1つ生成し，反論フェーズに遷移する.
 
 論証の出力形式は，単なる自然文ではなく，推論規則の列（rules）から構成される論証として表現される．
 各規則は，結論を導くための最小限の前提（antecedent.strong）および，証拠不在を仮定する弱否定（antecedent.weak\_negation）から，結論（consequent）を導く形式を取り，規則列は結論に至る推論の依存関係を明示する順序構造を持つ．
-また，各論証は，結論の集合（Conc）および仮定の集合（Ass）を明示的に保持する．
+また，各論証は，結論の集合（Conc）および弱否定の集合（Ass）を明示的に保持する．
 Conc, Assはそれぞれ，consequentの集合リストと，弱否定の集合リストである．
 これにより，各エージェントの主張がどの前提に基づいて構成されているかを構造的に把握可能とする．
 
@@ -302,7 +316,7 @@ Conc, Assはそれぞれ，consequentの集合リストと，弱否定の集合�
 反論フェーズでは，以下の手続きを反復的に実行することで，エージェント間の対立を段階的に掘り下げる．
 
 \begin{enumerate}
-\item 相手の直前の論証（初期主張または再反論）に対して，反論が可能かを判定する．反論が可能な場合は，rebut（結論への反駁）または undercut（推論規則の前提への攻撃）のいずれかを選択し，新たな論証を構築する．
+\item 相手の直前の論証（初期主張または再反論）に対して，反論が可能かを判定する．反論が可能な場合は，rebut（結論への反駁）またはundercut（推論規則の前提への攻撃）のいずれかを選択し，新たな論証を構築する．
 反論が不可能な場合，相手の論証が正当化されたとみなし，議論を終了し，システムにプロトコルの終了を通知する．
 \item 反論が生成された場合，今度は先に主張したエージェントが，同様にその反論に対して再反論可能かを判定し，可能であれば再反論を構築し，不可能であれば当該エージェントの論証がdefeated（敗北）したものとして議論を終了し，
 エージェントの主張が行われていなければそちらを，そうでなければ統合フェーズに進む．
@@ -312,11 +326,11 @@ Conc, Assはそれぞれ，consequentの集合リストと，弱否定の集合�
 反論の手法は，Kido, Kuriharaらに則り，以下のように定義し，エージェントはこれらが実行可能なとき，反論可能と判断する．
 
 \begin{itemize}
-\item \textbf{rebut}: 相手の論証及び反論における consequent を否定する．
-\item \textbf{undercut}: 相手の論証及び反論における weak\_negation （ある事象が成り立たないという仮定）を否定し，それらが実際に成り立つことを証明する．
+\item \textbf{rebut}: 相手の論証及び反論におけるconsequentを否定する．
+\item \textbf{undercut}: 相手の論証及び反論におけるweak\_negation（ある事象が成り立たないという仮定）を否定し，それらが実際に成り立つことを証明する．
 \end{itemize}
 
-反論の出力形式は，反論可能判断（YES / NO），攻撃方法（rebut / undercut），前提（strong, weak\_negation），結論（consequent），および Conc, Ass を明示する．
+反論の出力形式は，反論可能判断（YES / NO），攻撃方法（rebut / undercut），前提（strong, weak\_negation），結論（consequent），およびConc, Assを明示する．
 これにより，どの前提がどのように攻撃され，どの仮定が否定されたのかを，論証間の関係として形式的に追跡可能とする．
 
 以下に，本フェーズにおけるjsonスキーマを示す（図 \ref{fig:message-schema-2}）.
@@ -329,14 +343,14 @@ Conc, Assはそれぞれ，consequentの集合リストと，弱否定の集合�
 \end{figure}
 
 \paragraph{統合フェーズ}
-Kido, Kuriharaの提案手法は，入力となる規則列（warrant）のペアに対し，お互いの前提と背景知識を用いながら自身の規則列にリテラルを付加していき，最終的にそれらが同時に成り立つ新たな規則を同定することで，統合を行なっていた．
-これを参考に，統合フェーズでは，各エージェントの論証（main argument）における最後の規則（warrant）を入力とし，以下の段階を経て，最初に論証構築を行なったエージェント（AG1）最終回答を構築する．
+Kido, Kuriharaの提案手法は，入力となる各エージェントの論証の最後のrule（warrant）のペアに対し，お互いの前提と背景知識を用いながら自身の規則列にリテラルを付加していき，最終的にそれらが同時に成り立つ新たな規則を同定することで，統合を行なっていた．
+これを参考に，統合フェーズでは，各エージェントの論証（main argument）における最後のrule（warrant）を入力とし，以下の段階を経て，最初に論証構築を行なったエージェント（AG1）最終回答を構築する．
 
 \begin{enumerate}
 \item 性質化（Characterization）：
 対立する2つの主張について，それぞれの前提（antecedent.strong）と結論（consequent）を「性質レベル」に抽象化する．
 
-これは，Kido, Kuriharaの提案手法において，特定の対象を指す表現を除去し，論理式を clause （節の集合の論理式）に変換する処理と対応しており，対立する主張の性質を明らかにすることで，最終的に合意を達成する論証の性質を同定するために必要な処理である．
+これは，Kido, Kuriharaの提案手法において，特定の対象を指す表現を除去し，論理式をclause（節の集合の論理式）に変換する処理と対応しており，対立する主張の性質を明らかにすることで，最終的に合意を達成する論証の性質を同定するために必要な処理である．
 この処理を経た論証のペアを（C1, C2）とする．
 
 \item 一般化（Generalization）：
@@ -345,7 +359,7 @@ Kido, Kuriharaの提案手法は，入力となる規則列（warrant）のペ�
 
 今回は，Kido, Kuriharaの提案手法におけるSpecializationを適用することなく，対立する性質のペアの両方を包含する1つの性質をそのまま出力させる．
 なぜなら，Specialization は，本来，対立する論証の前提をそれぞれ個別に特化させ，両者の適用条件を明確に分離した上で統合処理へと導く操作であるためである．
-この操作は，記号論理においては，対立する clause に対して新たなリテラルを付加することで適用範囲を制限し，衝突を回避する役割を果たす．
+この操作は，記号論理においては，対立するclauseに対して新たなリテラルを付加することで適用範囲を制限し，衝突を回避する役割を果たす．
 しかし，自然言語による議論においては，このような特化操作は，対立構造を解消するというよりも，単に条件を追加する形で論証を分岐させる結果となり，価値観の再構成という観点からは逆に，多様な止揚論証の可能性を狭めてしまう場合がある．
 したがってSpecializationを適用しない方針をとり，それに伴って必要になる背景知識（background knowledge）も使用しない．
 
@@ -383,7 +397,7 @@ Kido, Kuriharaの提案手法は，入力となる規則列（warrant）のペ�
 
 \subsubsection{問題設定・実行}
 題材には，Kido，Kurihara[1] 第6章で用いられているカメラ購買問題を採用した．
-議題（Issue）は "Which camera should we buy" とし，2体のエージェントには，それぞれ異なる事実および推論規則からなるスタンスを入力として与えた．
+議題（Issue）は"Which camera should we buy"とし，2体のエージェントには，それぞれ異なる事実および推論規則からなるスタンスを入力として与えた．
 入力の具体例については，3章で示した図\ref{fig:input}の通りである．
 本問題設定では，一方のエージェントが「携帯性・操作性」を重視する立場，他方のエージェントが「画質・バッテリー性能」を重視する立場をとることで，評価基準の異なる2つの観点が意図的に対立するよう設計されている．
 
@@ -400,9 +414,16 @@ Kido, Kuriharaの提案手法は，入力となる規則列（warrant）のペ�
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\linewidth]{dialogue.png}
-  \caption{対話実行のログ可視化}
+  \includegraphics[width=1.0\linewidth]{dialogue.png}
+  \caption{対話実行のログ}
   \label{fig:dialogue}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1.0\linewidth]{synthesis.png}
+  \caption{統合フェーズによる止揚論証の生成}
+  \label{fig:synthesis}
 \end{figure}
 
 
@@ -410,12 +431,6 @@ Kido, Kuriharaの提案手法は，入力となる規則列（warrant）のペ�
 対話の結果，いずれの主張も単独では正当化されない状態となり，反論フェーズで得られた議論履歴に対して統合フェーズが適用された．
 図\ref{fig:synthesis}は，性質化および一般化を経て得られた合意核に基づき，最終的な止揚論証が構築される過程を示したものである．
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\linewidth]{synthesis.png}
-  \caption{統合フェーズによる止揚論証の生成}
-  \label{fig:synthesis}
-\end{figure}
 
 図\ref{fig:dialogue}，図\ref{fig:synthesis}に示すように，本研究のプロトコルでは，多ターンの議論を通じて対立点が段階的に明確化され，
 最終的に性質化および一般化を経て，単なる折衷ではない止揚論証が構築されていることが確認できる．
@@ -441,8 +456,8 @@ Kido, Kuriharaの提案手法は，入力となる規則列（warrant）のペ�
 
 \begin{itemize}
   \item 構造的一致：
-  提案プロトコルによって生成される議論構造が，Kido，Kurihara によって定義された計算的弁証法の形式例と対応しているかを検証する．
-  具体的には，論証の構築順序，反論関係（defeat 関係）の形成，および議論終了後に統合が生成される過程について，形式例と照合しながら確認する．
+  提案プロトコルによって生成される議論構造が，Kido，Kuriharaによって定義された計算的弁証法の形式例と対応しているかを検証する．
+  具体的には，論証の構築順序，反論関係（defeat関係）の形成，および議論終了後に統合が生成される過程について，形式例と照合しながら確認する．
 
   \item 統合の再現性：
   生成される最終回答が，既存の形式例における統合結果と意味的に対応しているかを検証する．
@@ -454,71 +469,84 @@ Kido, Kuriharaの提案手法は，入力となる規則列（warrant）のペ�
 
 
 \subsection{評価に用いる比較データ}\label{subsec-eval-data}
-本研究では，提案する弁証法プロトコルの妥当性を検証するための比較対象として，Kido，Kurihara によって提案されたカメラ購買問題に関する対話例（文献[1] 第6章）を用いる．
+本研究では，提案する弁証法プロトコルの妥当性を検証するための比較対象として，Kido，Kuriharaによって提案されたカメラ購買問題に関する対話例（文献[1] 第6章）を用いる．
 本節では，評価の基準となる形式例を明確にするため，文献中で用いられている問題設定および対話過程を示す．
 
 まず，文献では次の議題と2つの知識ベースが与えられる．
 \[
-Issue = buy(x) \land camera(x)
+\begin{aligned}
+Issue &= buy(x) \land camera(x) \\
+S_1 = \{\, &
+  camera(a),\ camera(c),\ compact(a),\ light(a), battery(c,\mathrm{long}), \\
+  & userFriendly(c),\ overTheBudget(b), \\
+  & compact(x) \land light(x) \land camera(x) \rightarrow buy(x), \\
+  & overTheBudget(x) \rightarrow \lnot buy(x), \\
+  & compact(x) \land light(x) \rightarrow userFriendly(x)\,\} \\
+S_2 = \{\, &
+  camera(b),\ outOfStock(a), \\
+  & battery(b,\mathrm{long}),\ resolution(b,\mathrm{high}), \\
+  & resolution(x,\mathrm{high}) \land battery(x,\mathrm{long}) \land camera(x)
+    \rightarrow buy(x), \\
+  & outOfStock(x) \rightarrow \lnot buy(x)
+\,\}
+\end{aligned}
 \]
-\begin{align*}
-S_1 = \{\, & camera(a),\ camera(c),\ compact(a),\ light(a), battery(c, \mathrm{long}),\\
-           & userFriendly(c),\ overTheBudget(b), compact(x) \land light(x) \\
-           & \land camera(x) \rightarrow buy(x), overTheBudget(x) \rightarrow \lnot buy(x)\\
-           & compact(x) \land light(x) \rightarrow userFriendly(x)\, \}
-\end{align*}
-\begin{align*}
-S_2 = \{\, & camera(b),\ outOfStock(a),\ battery(b, \mathrm{long}), resolution(b, \mathrm{high})\\
-           & resolution(x, \mathrm{high}) \land battery(x, \mathrm{long}), \quad \land camera(x) \rightarrow buy(x),\\
-           & outOfStock(x) \rightarrow \lnot buy(x)\, \}
-\end{align*}
-ここで，$S_1$ および $S_2$ は，それぞれエージェント1およびエージェント2に与えられる知識ベースを表す．
-$S_1$ は携帯性や使いやすさを重視する立場に対応しており，$S_2$ は高画質およびバッテリー性能を重視する立場に対応している．
+
+ここで，$S_1$および$S_2$は，それぞれエージェント1およびエージェント2に与えられる知識ベースを表す．
+$S_1$は携帯性や使いやすさを重視する立場に対応しており，$S_2$は高画質およびバッテリー性能を重視する立場に対応している．
 両者は評価基準が異なるため，購入すべきカメラについて対立した判断を導く．
 
 次に，文献中で示されている対話の進行を原表記に基づいて示す．
-ここで $\mathrm{Arg}_{i}^{j}$ は，「エージェント $i$ が構築した $j$ 番目の論証」を表す．
+ここで$\mathrm{Arg}_{i}^{j}$は，「エージェント$i$が構築した$j$番目の論証」を表す．
 
 まず，エージェント1が主張を構築し，エージェント2がこれを反論する．
-\begin{flalign*}
-\mathrm{Arg}_{1}^{1}
-&= [compact(a), light(a), camera(a),\quad compact(a) \land light(a) \land camera(a)&&\\
-   &  \rightarrow buy(a)]&&
-\end{flalign*}
-(I want to buy 'a' Since it is a compact and light camera.)
-\begin{flalign*}
-\mathrm{Arg}_{2}^{2}
-&= [outOfStock(a),\; outOfStock(a) \rightarrow \lnot buy(a)]&&
-\end{flalign*}
-(It is out of stock.)
 
+\[
+\begin{aligned}
+\mathrm{Arg}_{1}^{1} &= [\,compact(a),\ light(a),\ camera(a),\quad compact(a)\land light(a)\land camera(a) \\
+&\rightarrow buy(a)\,]
+\quad \text{(I want to buy `a` since it is a compact and light camera.)} \\[0.5em]
+\mathrm{Arg}_{2}^{2} &= [\,outOfStock(a),\; outOfStock(a) \rightarrow \lnot buy(a)\,]
+\quad \text{(It is out of stock.)}
+\end{aligned}
+\]
 この反論に対して，エージェント1はこれを打ち負かす論証を構築できない．
-したがって，$\mathrm{Arg}_{1}^{1}$ はdefeatedとなり，エージェント2の主張へ移る．
+したがって，$\mathrm{Arg}_{1}^{1}$はdefeatedとなり，エージェント2の主張へ移る．
 
 続いて，エージェント2が新たな主張を行い，エージェント1がこれに反論する．
-\begin{flalign*}
-\mathrm{Arg}_{2}^{3}
-&= [resolution(b, \mathrm{high}),\ battery(b, \mathrm{long}),\ camera(b), resolution(b, \mathrm{high})&&\\
-   & \land battery(b, \mathrm{long}) \land camera(b) \rightarrow buy(b)]&&
-\end{flalign*}
-(Would you like 'b?' Because it is a high-resolution camera with a long battery life.)
-\begin{flalign*}
-\mathrm{Arg}_{1}^{4}
-&= [overTheBudget(b),\; overTheBudget(b) \rightarrow \lnot buy(b)]&&
-\end{flalign*}
-(It exceeds the budget.)
+\[
+\begin{aligned}
+\mathrm{Arg}_{2}^{3} &=
+[\,resolution(b,\mathrm{high}),\ battery(b,\mathrm{long}),\ camera(b), camera(b)\\
+&\land resolution(b,\mathrm{high}) \land battery(b,\mathrm{long}) 
+\rightarrow buy(b)\,] \quad \text{（Would you like `b`?} \\
+&\text{Because it is a high-resolution camera with a long battery life.）}
+\end{aligned}
+\]
 
-この結果，$\mathrm{Arg}_{1}^{1}$ および $\mathrm{Arg}_{2}^{3}$ のいずれも正当化されず，さらに両エージェントはこれ以上の主張を構築できない状態となる．
-そこで，エージェント1は，対立する主張のwarrant（$\mathrm{Arg}_{1}^{1}$, $\mathrm{Arg}_{2}^{3}$）に対して統合のアルゴリズム（Reasoning Method）を適用し，両者の根拠（warrant）を統合した新たな主張を構築する．
-\begin{flalign*}
-\mathrm{Arg}_{1}^{5}
-&= [userFriendly(c),\ battery(c, \mathrm{long}),\ camera(c), userFriendly(c)&&\\
-   &  \land battery(c, \mathrm{long}) \land camera(c) \rightarrow buy(c)]&&
-\end{flalign*}
-(I will then buy ``c.'' Since this is a user-friendly camera with a long battery life.)
+\[
+\begin{aligned}
+\mathrm{Arg}_{1}^{4} &=
+[\,overTheBudget(b),\ overTheBudget(b) \rightarrow \lnot buy(b)\,] \quad \text{（It exceeds the} \\
+&\text{budget.）}
+\end{aligned}
+\]
 
-この $\mathrm{Arg}_{1}^{5}$ は，携帯性・使いやすさとバッテリー性能という異なる評価軸を同時に満たす対象として $c$ を選択するものであり，
-$\mathrm{Arg}_{1}^{1}$ と $\mathrm{Arg}_{2}^{3}$ の根拠を包摂した統合的な論証である．
+
+この結果，$\mathrm{Arg}_{1}^{1}$および$\mathrm{Arg}_{2}^{3}$のいずれも正当化されず，さらに両エージェントはこれ以上の主張を構築できない状態となる．
+そこで，エージェント1は，対立する主張のwarrant（$\mathrm{Arg}_{1}^{1}$,$\mathrm{Arg}_{2}^{3}$）に対して統合のアルゴリズム（Reasoning Method）を適用し，両者の根拠（warrant）を統合した新たな主張を構築する．
+
+\[
+\begin{aligned}
+\mathrm{Arg}_{1}^{5} &=
+[\,userFriendly(c),\ battery(c, \mathrm{long}),\ camera(c), userFriendly(c)&&\\
+   &  \land battery(c, \mathrm{long}) \land camera(c) \rightarrow buy(c)] \quad \text{（I will then buy `c.'} \\
+&\text{Since this is a user-friendly camera with a long battery life.）}
+\end{aligned}
+\]
+
+この$\mathrm{Arg}_{1}^{5}$は，携帯性・使いやすさとバッテリー性能という異なる評価軸を同時に満たす対象として$c$を選択するものであり，
+$\mathrm{Arg}_{1}^{1}$と$\mathrm{Arg}_{2}^{3}$の根拠を包摂した統合的な論証である．
 
 
 
@@ -537,85 +565,68 @@ $\mathrm{Arg}_{1}^{1}$ と $\mathrm{Arg}_{2}^{3}$ の根拠を包摂した統合
 が，形式例と同型であることを指す．
 
 まず，形式例では，
-エージェント1が知識ベース $S_1$ に基づき，
+エージェント1が知識ベース$S_1$に基づき，
 「コンパクトかつ軽量であり，かつカメラである対象は購入すべきである」
 という規則を適用し，
-対象 $a$ がコンパクトで軽量なカメラであるという前提から，
-「カメラ $a$ を購入すべきである」という主張を導出する．
+対象$a$がコンパクトで軽量なカメラであるという前提から，
+「カメラ$a$を購入すべきである」という主張を導出する．
 これは，次の論証として表現されている．
-\begin{flalign*}
-\mathrm{Arg}_{1}^{1}
-&= [compact(a), light(a), camera(a),\quad compact(a) \land light(a) \land camera(a)&&\\
-   &  \rightarrow buy(a)]&&
-\end{flalign*}
+\[
+\begin{aligned}
+\mathrm{Arg}_{1}^{1} &= [\,compact(a),\ light(a),\ camera(a),\quad compact(a)\land light(a)\land camera(a) \\
+&\rightarrow buy(a)\,]
+\quad \text{(I want to buy `a` since it is a compact and light camera.)} \\[0.5em]
+\end{aligned}
+\]
 
 本研究の実行結果においても，対話の初期段階でエージェント1は，
-【コンパクトである】【軽量である】【カメラである】
-という性質を前提とし，
-「コンパクトかつ軽量なカメラは購入すべきである」
-という規則に基づいて，
-特定の対象について購買結論を導出している．
-この推論は，
-携帯性に関する性質集合から購買結論を導くという点で，
-形式例の $\mathrm{Arg}_{1}^{1}$ と構造的に一致している．
+"a is a camera", "a is compact", "a is light"
+という性質を前提とし，"If a camera is compact and light, we should buy it"という前提を用い，
+特定の対象について購買結論"We should buy a"を導出している．
+この推論は，携帯性に関する性質集合から購買結論を導くという点で，形式例の$\mathrm{Arg}_{1}^{1}$と構造的に一致している．
 
-これに対して形式例では，
-エージェント2が，
-「在庫切れであれば購入すべきでない」
-という規則を適用し，
-対象 $a$ が在庫切れであるという前提から，
-先の購買結論を否定する反論を構築する．
+これに対して形式例では，エージェント2が，「在庫切れであれば購入すべきでない」という規則を適用し，対象$a$が在庫切れであるという前提から，先の購買結論を否定する反論を構築する．
 これは，次の論証として与えられている．
-\begin{flalign*}
-\mathrm{Arg}_{2}^{2}
-&= [outOfStock(a),\; outOfStock(a) \rightarrow \lnot buy(a)]&&
-\end{flalign*}
+\[
+\begin{aligned}
+\mathrm{Arg}_{2}^{2} &= [\,outOfStock(a),\; outOfStock(a) \rightarrow \lnot buy(a)\,]
+\quad \text{(It is out of stock.)}
+\end{aligned}
+\]
 
 本研究の実行結果においても，
-初期主張に対してエージェント2は，
-【在庫切れである】
-という事実を前提とし，
-「在庫切れであれば購入すべきでない」
-という規則を適用することで，
-当該購買結論を否定する反論を構築している．
+初期主張に対してエージェント2は，　"a is out of stock"
+という事実と，"If a camera is out of stock, we should not buy it"という前提を用いて
+当該購買結論を否定する反論"We should not buy a"を構築している．
 この反論に対して，
-初期主張側のエージェントは，
-これを打ち負かす新たな論証を構築できない状態に至っている．
+初期主張側のエージェントは，反論の可能性を検討するが，rebutの論証はAssが空であり，これに対するundercutは構築できない．
 
-その結果，
-形式例と同様に，
-初期主張は defeated と判定され，
-議論はエージェント1の主張段階で終了する．
-これに伴い，
-次の主張権は反論を行ったエージェント2へと移行する．
-この「反論不能性を条件とした主張権の遷移」は，
-計算的弁証法における議論進行規則そのものであり，
-本研究のプロトコルが形式例と同型の遷移条件を実装していることを示している．
+その結果，形式例と同様に議論は終了する．
+これに伴い，次の主張権は反論を行ったエージェント2へと移行する．
+この「反論不能性を条件とした主張権の遷移」は，計算的弁証法における議論進行規則そのものであり，本研究のプロトコルが形式例と同型の遷移条件を実装していることを示している．
 
 続いて形式例では，
-主張権を得たエージェント2が，
+エージェント2が，
 「高画質であり，かつバッテリーの持続時間が長く，カメラである対象は購入すべきである」
 という規則を適用し，
-対象 $b$ が高画質かつ長時間利用可能なカメラであるという前提から，
+対象$b$が高画質かつ長時間利用可能なカメラであるという前提から，
 新たな購買主張を構築する．
 これは，次の論証として示されている．
-\begin{flalign*}
-\mathrm{Arg}_{2}^{3}
-&= [resolution(b, \mathrm{high}),\ battery(b, \mathrm{long}),\ camera(b), resolution(b, \mathrm{high})&&\\
-   & \land battery(b, \mathrm{long}) \land camera(b) \rightarrow buy(b)]&&
-\end{flalign*}
+\[
+\begin{aligned}
+\mathrm{Arg}_{2}^{3} &=
+[\,resolution(b,\mathrm{high}),\ battery(b,\mathrm{long}),\ camera(b), camera(b)\\
+&\land resolution(b,\mathrm{high}) \land battery(b,\mathrm{long}) 
+\rightarrow buy(b)\,] \quad \text{（Would you like `b`?} \\
+&\text{Because it is a high-resolution camera with a long battery life.）}
+\end{aligned}
+\]
 
 本研究の実行結果においても，
 主張権の移行後，
-エージェント2は，
-【高画質である】【バッテリーの持続時間が長い】【カメラである】
-という性質を前提とし，
-「高画質かつ長時間利用可能なカメラは購入すべきである」
-という規則に基づいて，
-第二の購買主張を構築している．
-この段階では，
-前提集合および適用規則が初期主張とは明確に切り替わっており，
-形式例の $\mathrm{Arg}_{2}^{3}$ と同一の推論構造が確認できる．
+エージェント2は，"b is a camera", "b has high image quality", "b has long battery life"という事実と，
+"If a camera has high resolution and long battery life, we should buy it"という前提を用いて
+購買主張"We should buy camera b"を構築している．
 
 これに対して形式例では，
 エージェント1が，
@@ -624,48 +635,34 @@ $\mathrm{Arg}_{1}^{1}$ と $\mathrm{Arg}_{2}^{3}$ の根拠を包摂した統合
 対象 $b$ が予算を超過しているという前提から，
 再び購買結論を否定する反論を構築する．
 これは次の論証として表される．
-\begin{flalign*}
-\mathrm{Arg}_{1}^{4}
-&= [overTheBudget(b),\; overTheBudget(b) \rightarrow \lnot buy(b)]&&
-\end{flalign*}
+\[
+\begin{aligned}
+\mathrm{Arg}_{1}^{4} &=
+[\,overTheBudget(b),\ overTheBudget(b) \rightarrow \lnot buy(b)\,] \quad \text{（It exceeds the} \\
+&\text{budget.）}
+\end{aligned}
+\]
 
 本研究の実行結果においても，
-第二の購買主張に対してエージェント1は，
-【予算を超過している】
-という前提を用い，
-「予算超過であれば購入すべきでない」
-という規則を適用することで，
-当該主張を否定する反論を構築している．
-この結果，
-初期主張および第二主張のいずれも正当化されず，
-両エージェントはこれ以上の主張を構築できない状態に至る．
+第二の購買主張に対してエージェント1は，"b is over budget"という前提と，
+"If a camera is over the budget, we should not buy it"という前提を用いて
+当該主張を否定する反論"We should not buy camera b"を構築している．
+この結果，エージェント1および2のいずれの主張も正当化されず，両エージェントはこれ以上の主張を構築できない状態に至る．
 
 以上の議論収束を受けて，
 形式例では，
 対立していた二つの購買主張
-（$\mathrm{Arg}_{1}^{1}$ と $\mathrm{Arg}_{2}^{3}$）の warrant を入力として，
+（$\mathrm{Arg}_{1}^{1}$と$\mathrm{Arg}_{2}^{3}$）のwarrantを入力として，
 統合アルゴリズムが適用され，
 携帯性・使いやすさとバッテリー性能という
-異なる評価軸を同時に満たす対象 $c$ を選択する
-統合論証 $\mathrm{Arg}_{1}^{5}$ が構築される．
+異なる評価軸を同時に満たす対象$c$を選択する
+統合論証$\mathrm{Arg}_{1}^{5}$が構築される．
 
-本研究の統合フェーズにおいても，
-反論フェーズで得られた議論履歴から，
-【携帯性・使いやすさ】および【性能・持続性】
-という対立する評価軸が抽出され，
-性質化および一般化を通じて，
-それらを包摂する合意核が構築されている．
-その結果得られた最終的な止揚論証は，
-個別の購買候補の折衷ではなく，
-対立していた評価基準そのものを上位概念のもとで再構成した結論となっており，
-この点においても形式例の $\mathrm{Arg}_{1}^{5}$ と構造的に一致している．
+統合の具体的な流れについては既存研究の対話例の中に示されていなかったため，対応関係を示すことはできないが，warrantの入力から双方の購買条件となる
+性質をそれぞれ抽出し，それらを包含する条件を新たに構築することで，同様の結論"Choose camera c,..."が導かれている．
+したがってこの点においても形式例の$\mathrm{Arg}_{1}^{5}$と構造的に一致していると言える．
 
-以上より，
-本研究の実行結果は，
-形式例における
-主張構築，反論，反論不能性に基づく主張権の移行，
-および統合という一連の推論過程を，
-前提―規則―結論の対応関係を保持したまま再現しており，
+以上より，本研究の実行結果は，形式例における主張構築，反論，の流れと，反論不能による主張エージェントの交代，および統合という一連の推論過程を，論理構造を保ちながら再現できており，
 提案プロトコルが構造的に既存の計算的弁証法モデルと一致していることが確認された．
 
 \end{evaluation}
@@ -674,6 +671,59 @@ $\mathrm{Arg}_{1}^{1}$ と $\mathrm{Arg}_{2}^{3}$ の根拠を包摂した統合
 \clearpage
 \section{考察}\label{sec-consideration}
 
+本章では，提案システム及びプロトコルの応用性について検討する．
+本研究では提案手法に対し，既存研究との整合性を検証したのみで，実際にさまざまなトピックについて有用な回答が得られたかどうかの検証は行っていない．
+したがって，本研究の結果からは，提案手法が既存研究の形式例と整合的に動作することは確認できたものの，
+入力として与えるスタンスの表現方法を変更した場合に，どのような性質の回答が得られるかについては，さらなる検討の余地がある．
+
+そこで考察として，従来のように
+「カメラa」「カメラb」といった架空の対象および明示的な事実・規則を与える形式ではなく，
+エージェントに対して評価観点のみを自然言語で与える入力形式を用いた．
+具体的には，一方のエージェントには携帯性や使いやすさを重視する立場を，
+他方のエージェントには画質やバッテリー性能を重視する立場を与え，
+個別の製品名や事実命題は明示的には指定していない．
+これらの入力例については，図\ref{fig:input_consideration}に示す．
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{input_consideration.png}
+  \caption{入力}
+  \label{fig:input_consideration}
+\end{figure}
+
+このような抽象的なスタンスのみを与えた条件下において，本システムを適用したところ，
+最終的な回答として，実在するカメラ製品名を含む具体的な提案が生成された．
+例えば，以下のような回答が得られた．
+
+"final\_answer": "Sony RX100 VII — a compact pocket camera that provides easy portability while delivering strong image quality."
+
+この結果は，合意核として満たすべき性質
+― すなわち「携帯性が高く使いやすいこと」と「十分な性能を備えていること」 ―
+を，LLMエージェントが実在する製品知識と対応付け，
+具体的な選択肢として提示した例であると解釈できる．
+
+従来のKido, Kuriharaらの対話例では，
+架空の対象に対して形式的に定義された事実と規則の組合せのみが議論の対象となっていた．
+そのため，LLMを用いた場合においても，
+生成される結論は入力として与えられた対象の範囲内に限定されると考えられていた．
+実際，架空の「カメラc」が最終回答として選択された場合，
+それは一般知識に基づく選択ではなく，
+あくまで与えられたスタンス内での形式的な帰結に過ぎない．
+
+しかしながら，本考察で示したように，
+評価観点のみを与える抽象的な入力形式においては，
+LLMが有する一般知識を活用し，
+合意核を満たす具体的な実在製品を自律的に対応付ける挙動が確認された．
+このことは，本システムが入力として与えられたスタンスのみに閉じた推論を行うのではなく，
+議論の構造を保ったまま，現実世界の知識を用いた回答生成へ拡張しうる可能性を示している．
+
+以上より，本結果は，文献中の形式例を忠実に再現するという観点では想定外の挙動を含むものの，
+提案システムを将来的に一般的な実問題や実在対象を含む意思決定問題へ適用する上で，
+有効な拡張性を有していることを示唆するものである．
+特に，評価軸のみを与えることで，
+具体的な選択肢の生成をLLMに委ねる設計は，
+多様なトピックへの応用において有望なアプローチであると考えられる．
+
 \end{consideration}
 
 \begin{conclusion}
@@ -681,7 +731,7 @@ $\mathrm{Arg}_{1}^{1}$ と $\mathrm{Arg}_{2}^{3}$ の根拠を包摂した統合
 \section{おわりに}\label{sec-conclusion}
 
 本研究では，大規模言語モデル（LLM）を用いたマルチエージェント対話に，計算的弁証法の理論的枠組みを導入することで，対立する主張を形式的に扱い，その上で止揚論証を生成する質問応答システムを提案した．
-論証を構造化スキーマとして表現し，rebut および undercut に基づく反論フェーズと，性質化および一般化に基づく統合フェーズからなる弁証法プロトコルを設計・実装した点に本研究の特徴がある．
+論証を構造化スキーマとして表現し，rebutおよびundercutに基づく反論フェーズと，性質化および一般化に基づく統合フェーズからなる弁証法プロトコルを設計・実装した点に本研究の特徴がある．
 さらに，Kido，Kurihara の形式例を評価基準として用いることで，提案手法が既存の計算的弁証法モデルと意味的に対応する議論構造および統合過程を再現できることを示した．
 
 本研究の意義は，既存の計算的弁証法モデルに基づく形式的な議論過程を，大規模言語モデルを用いた自然言語対話として構造的に再現可能であることを示した点にある．
@@ -694,7 +744,7 @@ $\mathrm{Arg}_{1}^{1}$ と $\mathrm{Arg}_{2}^{3}$ の根拠を包摂した統合
 第一に，本研究では評価対象を特定の形式例に限定したが，本プロトコルをさまざまなトピックに適用し，社会的・倫理的問題や価値観の対立を含む多様な議題において，議論構造および統合過程がどの程度一貫して再現されるかを検証することが重要である．
 これにより，本手法の適用範囲と限界を体系的に明らかにできると考えられる．
 
-第二に，本研究では特定の LLM を用いてエージェントを構成したが，今後はモデル規模や学習方針の異なる複数の LLM を用いたエージェント間対話を通じて，議論の進行特性や統合結果の差異を比較することが課題である．
+第二に，本研究では特定のLLMを用いてエージェントを構成したが，今後はモデル規模や学習方針の異なる複数のLLMを用いたエージェント間対話を通じて，議論の進行特性や統合結果の差異を比較することが課題である．
 また，プロンプト設計や内部表現の調整（チューニング）を通じて，反論の生成傾向や統合の抽象度がどのように変化するかを分析することで，弁証法的推論に適したエージェント設計指針の確立が期待される．
 
 第三に，議論過程におけるエージェントの発言の一貫性に対する評価枠組みの構築が挙げられる．具体的には，各エージェントが初期の立場や評価基準を議論の進行中にどの程度維持しているか，また統合段階においてそれらがどのように再構成されているかを定量的に測定する指標の設計が求められる．
@@ -826,17 +876,14 @@ Argumentation structure:
 - Conc: A list collecting the consequent of each rule
 - Ass: A list collecting the weak_negation of each rule
 
-Special note:
-When the opponent's argument is a counterargument and it is a rebut, the attack method must be undercut.
-
-Output only the following JSON:
+    Output only the following JSON:
 {
   "can_defeat": "YES or NO",
   "Argument": {
+    "attack": "rebut or undercut",
     "rules": [
       {
         "id": "r1",
-        "attack": "rebut or undercut",
         "antecedent": {
           "strong": [
             "Minimum necessary premise 1 to derive conclusion", 
@@ -961,14 +1008,12 @@ Task:
 Based on the given consensus core E, present a solution that satisfies the conditions of E.strong as much as possible, and make it the final answer.
 
 Constraint:
-- Individual conclusions appearing in the warrants of Argument1 and Argument2 must not be used as they are in the final answer
+- Individual conclusions appearing in the warrants of Argument1 and Argument2 ""must"" not be used as they are in the final answer
 - The final answer must be a concrete solution that satisfies E.strong
 
 Output only the following JSON:
 {
-  "FinalAnswer": {
-    "final_answer": "Final answer (simple)"
-  }
+  "final_answer": "Final answer (simple)"
 }
 \end{lstlisting}
 
