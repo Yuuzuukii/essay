@@ -241,6 +241,21 @@
 \def\bf{\protect\pdg\protect\pbf}
 \fi\fi								% 2.00(5)<<
 
+% Use Georgia for student ID when supported (XeLaTeX/LuaLaTeX).
+\ifx\kuis@georgia\undefined
+\ifx\directlua\undefined
+\ifx\XeTeXrevision\undefined
+\def\kuis@georgia#1{#1}
+\else
+\RequirePackage{fontspec}
+\newfontfamily\kuis@georgia{Georgia}
+\fi
+\else
+\RequirePackage{fontspec}
+\newfontfamily\kuis@georgia{Georgia}
+\fi
+\fi
+
 
 %%%%%% Page Layout Parameters %%%%%%
 
@@ -377,10 +392,13 @@
 	\ifDS@master \mkt@department\else
 		\ifnum\c@entranceyear<2017\relax
 			立命館大学情報理工学部\\情報コミュニケーション学科\else
-			立命館大学情報理工学部\\先端社会デザインコース\fi\fi\par
+			立命館大学　情報理工学部\\先端社会デザインコース　4回生\\{\kuis@georgia{2600220356-0}}\fi\fi\par
 	\bigskip\bigskip
 	{\Large \@author}\par
 	\bigskip\bigskip\bigskip\bigskip
+	\@ifundefined{@department}{}{%
+		{\large \@department}\par
+		\bigskip\bigskip}
 	\@date
 	\end{center}\newpage}
 

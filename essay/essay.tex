@@ -48,7 +48,9 @@
 \jauthor{増尾 柚希}				% 和文著者名
 \eauthor{Yuzuki MASUO}			% 英文著者名
 \supervisor{村上 陽平 教授}		% 指導教官名
-\date{令和8年1月31日}				% 提出年月日
+\department{2025年度（秋学期）卒業研究3（CH）}
+
+\date{令和8年1月30日}				% 提出年月日
 
 \begin{document}
 \maketitle					% 「とびら」の出力
@@ -586,38 +588,44 @@ $\mathrm{Arg}_{1}^{1}$と$\mathrm{Arg}_{2}^{3}$の根拠を包摂した統合的
 \subsection{実験結果}\label{subsec-experiment-result}
 
 \subsubsection{対話結果}
-以下では，主張，反論，再反論の各段階で生成された論証を，対話ログの画像として提示する．
-実際は前章で説明したjsonスキーマの通り出力されるが，余白の関係で簡略化したものを示す（図\ref{fig:dialogue}）．
+以下では，主張，反論，再反論の各段階で生成された論証を，対話ログの画像として提示する．（図\ref{fig:dialogue1}，図\ref{fig:dialogue2}）．
 それぞれの変数名は，前章で定義したものと同じである．
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=1.0\linewidth]{dialogue.png}
-  \caption{対話実行のログ}
-  \label{fig:dialogue}
+  \includegraphics[width=1.0\linewidth]{dialogue1.png}
+  \caption{対話ログ1}
+  \label{fig:dialogue1}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1.0\linewidth]{dialogue2.png}
+  \caption{対話ログ2}
+  \label{fig:dialogue2}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=1.0\linewidth]{synthesis.png}
-  \caption{統合フェーズによる止揚論証の生成}
+  \caption{対話ログ3（統合フェーズによる止揚論証の生成）}
   \label{fig:synthesis}
 \end{figure}
 
 
 \subsubsection{止揚論証の生成}
 対話の結果，いずれの主張も単独では正当化されない状態となり，反論フェーズで得られた議論履歴に対して統合フェーズが適用された．
-図\ref{fig:synthesis}は，性質化および一般化を経て得られた合意核に基づき，最終的な止揚論証が構築される過程を示したものである．
+図\ref{fig:synthesis}は，性質化および統合を経て得られた合意核に基づき，最終的な止揚論証が構築される過程を示したものである．
 
 
-図\ref{fig:dialogue}，図\ref{fig:synthesis}に示すように，本研究のプロトコルでは，多ターンの議論を通じて対立点が段階的に明確化され，
-最終的に性質化および一般化を経て，単なる折衷ではない止揚論証が構築されていることが確認できる．
+図\ref{fig:dialogue1}，図\ref{fig:dialogue2}，図\ref{fig:synthesis}に示すように，本研究のプロトコルでは，多ターンの議論を通じて対立点が段階的に明確化され，
+最終的に性質化および統合を経て，単なる折衷ではない止揚論証が構築されていることが確認できる．
 
 
 \subsection{結果の分析}\label{subsec-eval-result}
 
 本節では，4.3.1項で示した形式例（文献[1] 第6章）と，
-図\ref{fig:dialogue}および図\ref{fig:synthesis}に示した本研究の実行結果を比較し，
+図\ref{fig:dialogue1}，図\ref{fig:dialogue2}および図\ref{fig:synthesis}に示した本研究の実行結果を比較し，
 提案プロトコルによって生成される議論過程および統合過程が，
 既存の計算的弁証法モデルと構造的に一致しているかを検証する．
 
@@ -811,7 +819,7 @@ LLMが有する一般知識を活用し，
 \section{おわりに}\label{sec-conclusion}
 
 本研究では，大規模言語モデル（LLM）を用いたマルチエージェント対話に，計算的弁証法の理論的枠組みを導入することで，対立する主張を形式的に扱い，その上で止揚論証を生成する質問応答システムを提案した．
-論証を構造化スキーマとして表現し，rebutおよびundercutに基づく反論フェーズと，性質化および一般化に基づく統合フェーズからなる弁証法プロトコルを設計・実装した点に本研究の特徴がある．
+論証を構造化スキーマとして表現し，rebutおよびundercutに基づく反論フェーズと，統合フェーズからなる弁証法プロトコルを設計・実装した点に本研究の特徴がある．
 さらに，Kido，Kurihara の形式例を評価基準として用いることで，提案手法が既存の計算的弁証法モデルと意味的に対応する議論構造および統合過程を再現できることを示した．
 
 本研究の意義は，既存の計算的弁証法モデルに基づく形式的な議論過程を，大規模言語モデルを用いた自然言語対話として構造的に再現可能であることを示した点にある．
@@ -1039,7 +1047,7 @@ Output:
 }
 \end{lstlisting}
 
-\textbf{一般化}
+\textbf{統合}
 \label{subsec:generalization_prompt}
 
 \begin{lstlisting}
